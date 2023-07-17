@@ -11,7 +11,10 @@ function App() {
   
 
   return (
+    <div className="flex">
     <LeftSidebar/>
+    <HomePage/>
+    </div>
   )
 }
 
