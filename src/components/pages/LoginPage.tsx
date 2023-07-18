@@ -2,7 +2,7 @@ import twittericon from "/src/assets/twittericon.png"
 import googleicon from "/src/assets/googleicon.svg"
 export const LoginPage = ()=>{
     return(
-        <div className="flex text-[rgb(231,233,234)] items-center bg-gray-700 sm:h-screen max-sm:bg-black max-[300px]:w-80 max-sm:w-screen  max-sm:h-screen">
+        <div className="flex text-[rgb(231,233,234)] items-center bg-gray-700 sm:h-screen max-sm:bg-black max-[300px]:w-80 max-sm:w-screen  max-sm:h-screen w-screen">
             <div className="flex flex-col items-center text-white bg-black  rounded-xl  w-[600px] max-w-[80vw] mx-auto justify-center min-h-[400px] max-h-[90vh] h-[600px]">
             <span className="pb-4"><img src={twittericon} alt="twitter logo" /></span>
             <form className="flex flex-col items-center max-w-[364px] min-h-[400px] gap-6">
