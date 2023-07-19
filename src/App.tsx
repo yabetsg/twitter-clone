@@ -9,10 +9,11 @@ import {
   ref,
   child,
   get,
+  set
 } from "firebase/database";
-import { initializeApp} from "firebase/app";
+import { FirebaseApp, FirebaseError, initializeApp} from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
+import { GoogleAuthProvider, getAuth, signInWithPopup,onAuthStateChanged } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyA35iNbPZJZbW5y1JPBITSBklmxi0z2UUI",
   authDomain: "twitter-clone-5defd.firebaseapp.com",
@@ -27,19 +28,41 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 function App() {
-  // function writeUserData() {
-  //   const db = getDatabase();
-  //   set(ref(db, 'users/' ), {
-  //     username: 'name',
-  //   });
-  // }
+  function writeUserData() {
+    const db = getDatabase();
+    set(ref(db, 'users/'), {
+      username: 'name',
+     
+    }).catch(error=>console.log(error)
+    );
+    
+  }
+  const googleAuth = ()=>{
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider).catch(error=>console.log(error)
+  );
+  onAuthStateChanged(auth,(user)=>{
+    if(user){
+     //
+      
+    }else{
+      console.log('signed out');
+      
+    }
+  })
+  
+  
+  }
 
   return (
     <div className="flex">
-      {/* <LoginPage/> */}
-    <LeftSidebar/>
+
+      {/* <button className="text-white bg-black" onClick={googleAuth}>Submit</button> */}
+      <LoginPage/>
+    {/* <LeftSidebar/>
     <HomePage/>
-    <RightSidebar/>
+    <RightSidebar/> */}
     </div>
   )
 }
