@@ -8,9 +8,12 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { app } from "../../backend/firebase-config";
 import { getDatabase, set, ref, get, child } from "firebase/database";
 import { User } from "firebase/auth";
+
+
 export const HomePage = () => {
   localStorage.clear();
   const [loggedIn, setLoggedIn] = useLocalStorage("user");
+  const [userId, setUserId] = useLocalStorage("userId");
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
 
@@ -48,7 +51,7 @@ export const HomePage = () => {
       .catch((error) => console.log(error));
   };
 
-  const createNewUser = (userid: string | undefined, res: User | null) => {
+  const createNewUser = (userid: string | undefined, AuthRes: User | null) => {
     const db = getDatabase();
     const newUserId = userid !== undefined ? userid : "";
     set(ref(db, "users/" + newUserId), {
@@ -56,17 +59,40 @@ export const HomePage = () => {
     }).catch((error) => {
       console.log(error);
     });
-    setDisplayName(res?.displayName);
+    setDisplayName(AuthRes?.displayName);
     const userAt = `${
-      res?.displayName !== undefined && res?.displayName !== null
-        ? res.displayName
+      AuthRes?.displayName !== undefined && AuthRes?.displayName !== null
+        ? AuthRes.displayName
         : ""
     }`;
     const newUserAt =
       userAt.replace(/\s/g, "") + Math.floor(Math.random() * 1000).toString();
     setUsername(newUserAt);
-    res ? setLoggedIn("logged_in") : null;
+    AuthRes ? setLoggedIn("logged_in") : null;
+    AuthRes ? setUserId(AuthRes.uid) : null;
+    getProfile()
   };
+
+  const getProfile = ()=>{
+    const dbRef = ref(getDatabase());
+    const newUserId = userId!==null?userId:'';
+    get(child(dbRef, "users/" + newUserId))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val() as {[key: string]: { name: string }}
+            for(const key of Object.keys(data)){
+                const info = data[key]
+                console.log(info);
+            }
+        } else {
+         console.log('x');
+         
+        }
+      }).catch((error)=>{
+        console.log(error);
+        
+      })
+  }
 
   return (
     <div className="flex">
