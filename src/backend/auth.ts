@@ -1,13 +1,13 @@
-import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, User, getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 // import { useState } from "react";
 
 
-export const googleAuth = async ()=>{
+export const googleAuth = async ():Promise<User|null>=>{
     const provider = new GoogleAuthProvider();
     const auth = getAuth();
     try{
       await signInWithPopup(auth, provider).catch(error=>console.log(error));
-    const user = new Promise((resolve)=>{
+    const user = new Promise<User|null>((resolve)=>{
       const unsubscribe = onAuthStateChanged(auth,(user)=>{
         unsubscribe();
         resolve(user);
@@ -16,6 +16,7 @@ export const googleAuth = async ()=>{
      return user;
     }catch(error){
       console.log(error);
+      return null;
     }
     
    

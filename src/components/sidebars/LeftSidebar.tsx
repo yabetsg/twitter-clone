@@ -7,7 +7,13 @@ import bookmarkicon from "/src/assets/bookmarks.svg";
 import messageicon from "/src/assets/messages.svg";
 import moreicon from "/src/assets/more.svg";
 import defaultimg from "/src/assets/default.png";
-export const LeftSidebar = () => {
+
+interface LeftSidebarProps{
+  username:string|null|undefined;
+  displayName:string|null|undefined;
+}
+
+export const LeftSidebar = ({username,displayName}:LeftSidebarProps) => {
   return (
     <div className="fixed flex flex-col items-center w-1/4 h-screen text-white bg-black">
       <div className="flex p-4 mr-44 hover:rounded-full hover:bg-[rgb(28,28,29)]">
@@ -80,8 +86,8 @@ export const LeftSidebar = () => {
             ></img>
           </div>
           <div className="text-center hover:bg-[rgb(28,28,29)] hover:rounded-full">
-            <div>Name</div>
-            <div className="pl-3 text-gray-500">@name</div>
+            <div>{displayName}</div>
+            <div className="pl-3 text-gray-500">{username}</div>
           </div>
         </button>
     </div>
