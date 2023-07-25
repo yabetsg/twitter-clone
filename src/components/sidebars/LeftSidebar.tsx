@@ -70,26 +70,30 @@ export const LeftSidebar = ({username,displayName}:LeftSidebarProps) => {
           More
         </div>
 
-        <div className="flex justify-center gap-5 p-5 text-xl">
-          <button className="bg-[rgb(29,155,240)] rounded-3xl w-52 h-12 hover:bg-[rgb(15,132,210)] font-semibold">
+        <div className="flex items-center justify-center gap-5 p-5 text-xl">
+          <button className="bg-[rgb(29,155,240)] rounded-3xl min-w-[208px] h-12 hover:bg-[rgb(15,132,210)] font-semibold">
             Tweet
           </button>
         </div>
 
       </nav>
-        <button className="flex pl-5 hover:bg-[rgb(28,28,29)] hover:rounded-full p-2 absolute right-0 bottom-0 m-14 w-48">
+      <div className="w-inherit h-[146px] flex items-end justify-center ">
+        <button className="flex  hover:bg-[rgb(28,28,29)] hover:rounded-full min-w-[192px] p-2">
           <div>
             <img
-              className="w-10 h-10 rounded-full"
+              className="max-w-[45px] max-h-[40px] rounded-full"
               src={defaultimg}
               alt=""
             ></img>
           </div>
-          <div className="text-center hover:bg-[rgb(28,28,29)] hover:rounded-full">
-            <div>{displayName}</div>
-            <div className="pl-3 text-gray-500">{username}</div>
+          <div className="text-center hover:bg-[rgb(28,28,29)] hover:rounded-full pl-3">
+            <div className="h-fit w-fit">{displayName}</div>
+            <div className="text-gray-500">{username}</div>
           </div>
+
+          
         </button>
+        </div>
     </div>
   );
 };
