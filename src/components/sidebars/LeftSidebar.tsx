@@ -7,13 +7,14 @@ import bookmarkicon from "/src/assets/bookmarks.svg";
 import messageicon from "/src/assets/messages.svg";
 import moreicon from "/src/assets/more.svg";
 import defaultimg from "/src/assets/default.png";
+import { LoginContext } from "../../contexts/LoginContext";
+import { useContext } from "react";
 
-interface LeftSidebarProps{
-  username:string|null|undefined;
-  displayName:string|null|undefined;
-}
 
-export const LeftSidebar = ({username,displayName}:LeftSidebarProps) => {
+
+export const LeftSidebar = () => {
+  const {displayName,username} = useContext(LoginContext);
+
   return (
     <div className="fixed flex flex-col items-center w-1/4 h-screen text-white bg-black">
       <div className="flex p-4 mr-44 hover:rounded-full hover:bg-[rgb(28,28,29)]">
