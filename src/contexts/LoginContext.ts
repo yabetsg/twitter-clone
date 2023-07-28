@@ -10,5 +10,8 @@ export const LoginContext = createContext<User>({
     },
     handleGoogleSignIn: (e: React.MouseEvent<HTMLElement>)=> {
         throw new Error("Function not implemented.");
+    },
+    handleLogout:(e: React.MouseEvent<HTMLElement>)=> {
+        throw new Error("Function not implemented.");
     }
 });

@@ -8,13 +8,14 @@ import messageicon from "/src/assets/messages.svg";
 import moreicon from "/src/assets/more.svg";
 import defaultimg from "/src/assets/default.png";
 import { LoginContext } from "../../contexts/LoginContext";
-import { useContext } from "react";
-
-
+import { useContext, useState } from "react";
 
 export const LeftSidebar = () => {
-  const {displayName,username} = useContext(LoginContext);
-
+  const { displayName, username, handleLogout } = useContext(LoginContext);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const handleLogoutModal = ()=>{
+    setShowLogoutModal(prev=>!prev);
+  }
   return (
     <div className="fixed flex flex-col items-center w-1/4 h-screen text-white bg-black">
       <div className="flex p-4 mr-44 hover:rounded-full hover:bg-[rgb(28,28,29)]">
@@ -26,7 +27,6 @@ export const LeftSidebar = () => {
             <img className="w-7 h-7" src={homeicon} alt="" />
           </span>
           <div className="">Home</div>
-          
         </div>
 
         <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
@@ -76,10 +76,13 @@ export const LeftSidebar = () => {
             Tweet
           </button>
         </div>
-
       </nav>
-      <div className="w-inherit h-[146px] flex items-end justify-center ">
-        <button className="flex  hover:bg-[rgb(28,28,29)] hover:rounded-full min-w-[192px] p-2">
+      <div className="w-inherit h-[146px] flex items-center justify-center flex-col gap-3">
+        {showLogoutModal&&<button onClick={handleLogout} className="max-w-[200px] w-[300px] text-white rounded-full bg-red-500 h-9">Logout</button>}
+        <button
+          className="flex  hover:bg-[rgb(28,28,29)] hover:rounded-full min-w-[192px] p-2"
+          onClick={handleLogoutModal}
+        >
           <div>
             <img
               className="max-w-[45px] max-h-[40px] rounded-full"
@@ -91,10 +94,8 @@ export const LeftSidebar = () => {
             <div className="h-fit w-fit">{displayName}</div>
             <div className="text-gray-500">{username}</div>
           </div>
-
-          
         </button>
-        </div>
+      </div>
     </div>
   );
 };

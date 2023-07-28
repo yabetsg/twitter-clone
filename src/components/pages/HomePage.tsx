@@ -7,25 +7,14 @@ import { googleAuth } from "../../backend/auth";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { User } from "firebase/auth";
 import { DataWithKey, DataWithoutKey } from "data";
-import { getData, setData } from "../../backend/dataAccess";
+import { getData, setData,checkIfUserExists } from "../../backend/dataAccess";
 import { LoginContext } from "../../contexts/LoginContext";
 export const HomePage = () => {
-  localStorage.clear();
+  // localStorage.clear();
   const [loggedIn, setLoggedIn] = useLocalStorage("user");
   const [userId, setUserId] = useLocalStorage("userId");
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
-
-  const checkIfUserExists = async (userid: string | undefined) => {
-    const newUserId = userid !== undefined ? userid : "";
-    let result = false;
-    if ((await getData(newUserId)).exists()) {
-      result = true;
-    } else {
-      result = false;
-    }
-    return result;
-  };
 
   const handleGoogleSignUp = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -41,22 +30,27 @@ export const HomePage = () => {
       })
       .catch((error) => console.log(error));
   };
-  const handleGoogleSignIn = (e: React.MouseEvent<HTMLElement>) =>{
-    e.preventDefault()
+  const handleGoogleSignIn = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
     googleAuth()
       .then(async (res) => {
         await checkIfUserExists(res?.uid).then((exists) => {
           if (exists) {
             setLoggedIn("logged_in");
-            res ? setUserId(res?.uid):null;
-            getProfile()
+            res ? setUserId(res?.uid) : null;
+            getProfile();
           } else {
-            console.log("account doesn't exist")
+            console.log("account doesn't exist");
           }
         });
       })
       .catch((error) => console.log(error));
-  }
+  };
+
+  const handleLogout = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setLoggedIn("logged_out");
+  };
   const createNewUser = (
     userid: string | undefined,
     displayName: string | undefined | null,
@@ -119,7 +113,13 @@ export const HomePage = () => {
 
   return (
     <LoginContext.Provider
-      value={{ displayName, username, handleGoogleSignUp, handleGoogleSignIn }}
+      value={{
+        displayName,
+        username,
+        handleGoogleSignUp,
+        handleGoogleSignIn,
+        handleLogout,
+      }}
     >
       <div className="flex">
         {loggedIn === "logged_in" ? (

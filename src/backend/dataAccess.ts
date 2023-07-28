@@ -13,3 +13,14 @@ export const setData =  async(userId:string,displayName:string|null,userName:str
     const docData = await getDoc(doc(db,"users",userid))
     return docData;
   }
+
+export const checkIfUserExists = async (userid: string | undefined) => {
+    const newUserId = userid !== undefined ? userid : "";
+    let result = false;
+    if ((await getData(newUserId)).exists()) {
+      result = true;
+    } else {
+      result = false;
+    }
+    return result;
+  };
