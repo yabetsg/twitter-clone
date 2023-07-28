@@ -8,17 +8,12 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { app } from "../../backend/firebase-config";
 import { getDatabase, set, ref, get, child } from "firebase/database";
 import { User } from "firebase/auth";
-interface DataWithKey {
-
-  [key: string]: { displayName: string; userName: string };
-}
-interface DataWithoutKey {
-  displayName: string;
-  userName: string;
-}
+import { DataWithKey, DataWithoutKey } from "d";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore"; 
+import { getFirestore } from "firebase/firestore";
 
 export const HomePage = () => {
-  // localStorage.clear()
+  localStorage.clear()
   const [loggedIn, setLoggedIn] = useLocalStorage("user");
   const [userId, setUserId] = useLocalStorage("userId");
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
@@ -28,22 +23,26 @@ export const HomePage = () => {
     const dbRef = ref(getDatabase());
     const newUserId = userid !== undefined ? userid : "";
     let result = false;
-    await get(child(dbRef, "users/" + newUserId))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          result = true;
-        } else {
-          result = false;
-        }
-      })
-      .catch((error) => console.log(error));
+    if((await getData(newUserId)).exists()){
+      result = true;
+    }else{
+      result = false;
+    }
+    
+    // await get(child(dbRef, "users/" + newUserId))
+    //   .then((snapshot) => {
+    //     if (snapshot.exists()) {
+    //       result = true;
+    //     } else {
+    //       result = false;
+    //     }
+    //   })
+    //   .catch((error) => console.log(error));
     return result;
   };
 
   const handleGoogleSignUp = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-
-    //authentication
 
     googleAuth()
       .then(async (res) => {
@@ -52,6 +51,7 @@ export const HomePage = () => {
             console.log("account exists");
           } else {
             createNewUser(res?.uid, res?.displayName, res);
+            
           }
         });
       })
@@ -63,7 +63,6 @@ export const HomePage = () => {
     displayName: string | undefined | null,
     AuthRes: User | null
   ) => {
-    const db = getDatabase();
     const userAt = `${
       AuthRes?.displayName !== undefined && AuthRes?.displayName !== null
         ? AuthRes.displayName
@@ -73,67 +72,63 @@ export const HomePage = () => {
       userAt.replace(/\s/g, "") + Math.floor(Math.random() * 1000).toString();
     const newUserId = userid !== undefined ? userid : "";
     const newDisplayName = displayName !== undefined ? displayName : "";
-
-    set(ref(db, "users/" + newUserId), {
-      displayName: newDisplayName,
-      userName: newUserAt,
-    }).catch((error) => {
-      console.log(error);
-    });
-    // setDisplayName(AuthRes?.displayName);
-
-    // setUsername(newUserAt);
+    setData(newUserId,newDisplayName,newUserAt).catch((error)=>console.log(error))
+   
     AuthRes ? setLoggedIn("logged_in") : null;
     AuthRes ? setUserId(AuthRes.uid) : null;
     getProfile();
   };
+
+  const setData =  async(userId:string,displayName:string|null,userName:string) =>{
+    const db = getFirestore(app);
+    await setDoc(doc(db,"users",userId),{
+      displayName:displayName,
+      userName:userName,
+    })
+  }
+  const getData = async (userid:string)=>{
+    const db = getFirestore(app);
+    const docData = await getDoc(doc(db,"users",userid))
+    return docData;
+  }
+
   function isDataWithKey(data: DataWithKey | DataWithoutKey): data is DataWithKey {
     return userId?userId in data:false;
   }
   
   const getProfile = () => {
-    const dbRef = ref(getDatabase());
+
     const newUserId = userId !== null ? userId : "";
-    const store: string[] = [];
-    // console.log('hi');
 
-    get(child(dbRef, "users/" + newUserId))
-      .then((snapshot) => {
 
+    getData(newUserId).then((snapshot)=>{
+      if (snapshot.exists()) {
+        const data = snapshot.data() as DataWithKey| DataWithoutKey;
+        console.log(data);
         
-        if (snapshot.exists()) {
-         
-          const data = snapshot.val() as DataWithKey| DataWithoutKey;
-          console.log(data.displayName);
-          
-        
-          
-          if (isDataWithKey(data)) {
-            for (const key of Object.keys(data)) {
-              const info = data[key];
-              info != undefined ? setDisplayName(info.displayName) : "";
-              info != undefined ? setUsername(info.userName) : "";
-              console.log("here");
-            }
-          } else {
-            setDisplayName(data.displayName);
-            setUsername(data.userName);
-            console.log("here2");
+        if (isDataWithKey(data)) {
+          for (const key of Object.keys(data)) {
+            const info = data[key];
+            info != undefined ? setDisplayName(info.displayName) : "";
+            info != undefined ? setUsername(info.userName) : "";
           }
         } else {
-          console.log("x");
+          setDisplayName(data.displayName);
+          setUsername(data.userName);
+         
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      } else {
+        // 
+      }
+    }).catch((error)=>{
+      console.log(error);
+    })
+    
   };
   useEffect(() => {
     getProfile();
-  }, []);
-  // useEffect(()=>{
-  //   //
-  // },[]);
+  }, [userId]);
+ 
 
   return (
     <div className="flex">
