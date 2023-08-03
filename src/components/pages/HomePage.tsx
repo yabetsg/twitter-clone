@@ -7,14 +7,15 @@ import { googleAuth } from "../../backend/auth";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { User } from "firebase/auth";
 import { DataWithKey, DataWithoutKey } from "data";
-import { getData, setData,checkIfUserExists } from "../../backend/dataAccess";
-import { LoginContext } from "../../contexts/LoginContext";
+import { getData, setData, checkIfUserExists } from "../../backend/dataAccess";
+import { AppContext } from "../../contexts/AppContext";
 export const HomePage = () => {
   // localStorage.clear();
   const [loggedIn, setLoggedIn] = useLocalStorage("user");
   const [userId, setUserId] = useLocalStorage("userId");
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
+  const [profileActive, setProfileActive] = useState<boolean>(false);
 
   const handleGoogleSignUp = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -87,8 +88,6 @@ export const HomePage = () => {
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data() as DataWithKey | DataWithoutKey;
-          console.log(data);
-
           if (isDataWithKey(data)) {
             for (const key of Object.keys(data)) {
               const info = data[key];
@@ -107,18 +106,24 @@ export const HomePage = () => {
         console.log(error);
       });
   };
+
+  const showProfile = (value:boolean)=>{
+    setProfileActive(value);
+  }
   useEffect(() => {
     getProfile();
   }, [userId]);
 
   return (
-    <LoginContext.Provider
+    <AppContext.Provider
       value={{
         displayName,
         username,
         handleGoogleSignUp,
         handleGoogleSignIn,
         handleLogout,
+        showProfile,
+        profileActive
       }}
     >
       <div className="flex">
@@ -132,6 +137,6 @@ export const HomePage = () => {
           <LoginPage />
         )}
       </div>
-    </LoginContext.Provider>
+    </AppContext.Provider>
   );
 };

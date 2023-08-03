@@ -1,8 +1,7 @@
 import twittericon from "/src/assets/twittericon.png";
 import googleicon from "/src/assets/googleicon.svg";
 import { useContext, useState } from "react";
-import { LoginContext } from "../../contexts/LoginContext";
-
+import { AppContext } from "../../contexts/AppContext";
 
 export const LoginPage = () => {
   const [signIn, setSignIn] = useState(true);
@@ -11,7 +10,7 @@ export const LoginPage = () => {
     setSignIn((prevState) => !prevState);
   };
 
-  const { handleGoogleSignUp, handleGoogleSignIn } = useContext(LoginContext);
+  const { handleGoogleSignUp, handleGoogleSignIn } = useContext(AppContext);
 
   return signIn ? (
     <div className="flex text-[rgb(231,233,234)] items-center bg-gray-700 sm:h-screen max-sm:bg-black max-[300px]:w-80 max-sm:w-screen  max-sm:h-screen w-screen">

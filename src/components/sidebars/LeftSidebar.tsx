@@ -7,72 +7,79 @@ import bookmarkicon from "/src/assets/bookmarks.svg";
 import messageicon from "/src/assets/messages.svg";
 import moreicon from "/src/assets/more.svg";
 import defaultimg from "/src/assets/default.png";
-import { LoginContext } from "../../contexts/LoginContext";
+import { AppContext } from "../../contexts/AppContext";
 import { useContext, useState } from "react";
 
 export const LeftSidebar = () => {
-  const { displayName, username, handleLogout } = useContext(LoginContext);
+  const { displayName, username, handleLogout, showProfile } = useContext(AppContext);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleLogoutModal = ()=>{
     setShowLogoutModal(prev=>!prev);
   }
+  
+  
   return (
-    <div className="fixed flex flex-col items-center w-1/4 h-screen text-white bg-black">
+    <div className="fixed flex flex-col items-center w-1/4 h-screen text-white bg-black ">
       <div className="flex p-4 mr-44 hover:rounded-full hover:bg-[rgb(28,28,29)]">
         <img className="w-7 h-7" src={twittericon} alt="twitter icon" />
       </div>
       <nav>
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
-          <span>
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer " onClick={()=>showProfile(false)}>
+          <span className="">
             <img className="w-7 h-7" src={homeicon} alt="" />
           </span>
-          <div className="">Home</div>
+          <div className="max-lg:hidden">Home</div>
         </div>
 
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer">
           <span>
             <img className="w-7 h-7" src={exploreicon} alt="" />
           </span>
-          Explore
+          <div className="max-lg:hidden">Explore</div>
+         
         </div>
 
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer">
           <span>
             <img className="w-7 h-7" src={notificationicon} alt="" />
           </span>
-          Notifications
+          <div className="max-lg:hidden">Notifications</div>
+          
         </div>
 
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer">
           <span>
             <img className="w-7 h-7" src={messageicon} alt="" />
           </span>
-          Message
+          <div className="max-lg:hidden">Message</div>
+         
         </div>
 
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer">
           <span>
             <img className="w-7 h-7" src={bookmarkicon} alt="" />
           </span>
-          Bookmark
+          <div className="max-lg:hidden">Bookmark</div>
+          
         </div>
 
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer" onClick={()=>showProfile(true)}>
           <span>
             <img className="w-7 h-7" src={profileicon} alt="" />
           </span>
-          Profile
+          <div className="max-lg:hidden">Profile</div>
+         
         </div>
 
-        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full">
+        <div className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer">
           <span>
-            <img className="w-8 h-8" src={moreicon} alt="" />
+            <img className="w-8 h-8" src={moreicon} alt=""/>
           </span>
-          More
+          <div className="max-lg:hidden">More</div>
         </div>
 
         <div className="flex items-center justify-center gap-5 p-5 text-xl">
-          <button className="bg-[rgb(29,155,240)] rounded-3xl min-w-[208px] h-12 hover:bg-[rgb(15,132,210)] font-semibold">
+          <button className="bg-[rgb(29,155,240)] rounded-3xl w-[208px] h-12 hover:bg-[rgb(15,132,210)] font-semibold">
             Tweet
           </button>
         </div>
@@ -92,7 +99,7 @@ export const LeftSidebar = () => {
           </div>
           <div className="text-center hover:bg-[rgb(28,28,29)] hover:rounded-full pl-3">
             <div className="h-fit w-fit">{displayName}</div>
-            <div className="text-gray-500">{username}</div>
+            <div className="text-gray-500">@{username}</div>
           </div>
         </button>
       </div>

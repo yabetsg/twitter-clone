@@ -1,7 +1,7 @@
 export const RightSidebar =()=>{
     return(
-        <main className="text-white bg-black w-[35%] flex flex-col items-center gap-4">
-            <div className="fixed w-[35%] bg-black flex justify-center">
+        <main className="text-white bg-black w-[30%] flex flex-col items-center gap-4">
+            <div className="fixed w-[30%] bg-black flex justify-center">
             <input type="text" placeholder="Search Twitter" className="w-3/4 p-3 mt-2 bg-gray-800 outline-none rounded-2xl"/>
             </div>
             <section className="bg-[rgb(22,24,28)] mt-16 w-3/4 rounded-xl font-bold p-4 flex flex-col gap-2">
