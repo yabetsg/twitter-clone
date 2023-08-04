@@ -7,7 +7,7 @@ import { googleAuth } from "../../backend/auth";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { User } from "firebase/auth";
 import { DataWithKey, DataWithoutKey } from "data";
-import { getData, setData, checkIfUserExists } from "../../backend/dataAccess";
+import { getData, setUserData, checkIfUserExists } from "../../backend/dataAccess";
 import { AppContext } from "../../contexts/AppContext";
 export const HomePage = () => {
   // localStorage.clear();
@@ -66,7 +66,7 @@ export const HomePage = () => {
       userAt.replace(/\s/g, "") + Math.floor(Math.random() * 1000).toString();
     const newUserId = userid !== undefined ? userid : "";
     const newDisplayName = displayName !== undefined ? displayName : "";
-    setData(newUserId, newDisplayName, newUserAt).catch((error) =>
+    setUserData("users",newUserId, newDisplayName, newUserAt).catch((error) =>
       console.log(error)
     );
 
@@ -84,7 +84,7 @@ export const HomePage = () => {
   const getProfile = () => {
     const newUserId = userId !== null ? userId : "";
 
-    getData(newUserId)
+    getData("users",newUserId)
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data() as DataWithKey | DataWithoutKey;
@@ -123,7 +123,8 @@ export const HomePage = () => {
         handleGoogleSignIn,
         handleLogout,
         showProfile,
-        profileActive
+        profileActive,
+        userId
       }}
     >
       <div className="flex">

@@ -1,7 +1,7 @@
 import React from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
-export const ProfilePage = ({displayName,username}:ProfileProps) => {
+export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   return (
     <>
       <section className="flex flex-col ">
@@ -14,7 +14,9 @@ export const ProfilePage = ({displayName,username}:ProfileProps) => {
             ></img>
           </div>
         </div>
-        <button className="flex self-end px-3 py-2 m-2 rounded-full outline outline-white">Set up Profile</button>
+        <button className="flex self-end px-3 py-2 m-2 rounded-full outline outline-white">
+          Set up Profile
+        </button>
       </section>
 
       <section className="flex flex-col gap-8 px-5 mt-16">
@@ -34,10 +36,18 @@ export const ProfilePage = ({displayName,username}:ProfileProps) => {
 
       <section className="border-b border-[rgb(47,51,54)] flex">
         <nav className="flex flex-1 h-20 py-6">
-          <button className="flex-1 hover:bg-[rgb(28,28,29)] max-h-14 h-14">Tweets</button>
-          <button className="flex-1 hover:bg-[rgb(28,28,29)]  max-h-14 h-14">Replies</button>
-          <button className="flex-1 hover:bg-[rgb(28,28,29)]  max-h-14 h-14">Media</button>
-          <button className="flex-1 hover:bg-[rgb(28,28,29)]  max-h-14 h-14">Likes</button>
+          <button className="flex-1 hover:bg-[rgb(28,28,29)] max-h-14 h-14">
+            Tweets
+          </button>
+          <button className="flex-1 hover:bg-[rgb(28,28,29)]  max-h-14 h-14">
+            Replies
+          </button>
+          <button className="flex-1 hover:bg-[rgb(28,28,29)]  max-h-14 h-14">
+            Media
+          </button>
+          <button className="flex-1 hover:bg-[rgb(28,28,29)]  max-h-14 h-14">
+            Likes
+          </button>
         </nav>
       </section>
     </>

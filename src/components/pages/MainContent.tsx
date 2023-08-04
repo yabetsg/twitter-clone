@@ -1,13 +1,19 @@
-import { useContext } from "react";
+import { FormEvent, useContext, useRef } from "react";
 import ProfilePage from "./ProfilePage";
 import { AppContext } from "../../contexts/AppContext";
+import { setTweetData } from "../../backend/dataAccess";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
-/*
-if profile is clicked change mainContent to show profilepage
-how to tell if profile is clicked
-*/
 export const MainContent = () => {
   const { profileActive, username, displayName } = useContext(AppContext);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [userId,setUserId]= useLocalStorage("userId");
+  const handleTweetSubmit = (e:FormEvent<HTMLFormElement>) =>{
+        e.preventDefault();
+        const tweet = inputRef.current? inputRef.current.value:"";
+        inputRef.current? inputRef.current.value = '':null;
+        setTweetData("tweets","1231",tweet,userId).catch((error)=>console.log(error))
+  }
   return (
     <>
       <div className="w-[45%]  text-white bg-black ml-[25%]  border-[rgb(47,51,54)] border-x border-collapse">
@@ -25,13 +31,15 @@ export const MainContent = () => {
               <form
                 action=""
                 className="flex flex-col border-b border-[rgb(47,51,54)]"
+                
+                onSubmit={handleTweetSubmit}
               >
                 <div className="pl-7">
                   <input
+                    ref={inputRef}
                     type="text"
                     placeholder="What is happening?!"
                     className="w-[90%] p-5 text-xl bg-inherit outline-none "
-
                   />
                 </div>
                 <div className="flex justify-end p-3">
@@ -47,16 +55,7 @@ export const MainContent = () => {
 
             <section className="">
               <div>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Exercitationem eaque perspiciatis repellat nisi nobis veritatis
-                explicabo ipsa non autem impedit. Et nam earum id mollitia
-                quisquam reprehenderit. Eius, ad iure. Facilis, praesentium
-                perferendis omnis vitae tenetur provident? Perspiciatis
-                accusamus at labore eaque vel aperiam, ut fugit repellat amet
-                optio iure beatae natus, nulla laborum repudiandae reiciendis
-                voluptas similique blanditiis officiis. Aliquam optio, vero
-                voluptate, eius recusandae aperiam harum dolorem commodi,
-                quisquam dolor quo atque! Odio accusantium ullam at soluta
+                Odio accusantium ullam at soluta
                 eligendi iste sapiente corporis dolorem voluptates repellat
                 quas, animi omnis labore? Ex vel officiis repudiandae fugit
                 eligendi sequi mollitia magnam aliquam blanditiis voluptate cum
@@ -103,7 +102,7 @@ export const MainContent = () => {
             </section>
           </>
         ) : (
-          <ProfilePage displayName={displayName} username={username}/>
+          <ProfilePage displayName={displayName} username={username} />
         )}
       </div>
     </>
