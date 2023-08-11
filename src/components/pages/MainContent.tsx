@@ -1,19 +1,27 @@
-import { FormEvent, useContext, useRef } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import ProfilePage from "./ProfilePage";
 import { AppContext } from "../../contexts/AppContext";
 import { setTweetData } from "../../backend/dataAccess";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import uniqid from 'uniqid';
+import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import { app } from "../../backend/firebase-config";
 
 export const MainContent = () => {
   const { profileActive, username, displayName } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [userId,setUserId]= useLocalStorage("userId");
+  const [userId]= useLocalStorage("userId");
   const handleTweetSubmit = (e:FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
         const tweet = inputRef.current? inputRef.current.value:"";
         inputRef.current? inputRef.current.value = '':null;
-        setTweetData("tweets","1231",tweet,userId).catch((error)=>console.log(error))
+        setTweetData("tweets",uniqid(),tweet,userId).catch((error)=>console.log(error));
+        // fetchCurrentUserTweets()
   }
+
+
+    
+ 
   return (
     <>
       <div className="w-[45%]  text-white bg-black ml-[25%]  border-[rgb(47,51,54)] border-x border-collapse">

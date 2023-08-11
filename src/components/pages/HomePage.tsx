@@ -9,10 +9,13 @@ import { User } from "firebase/auth";
 import { DataWithKey, DataWithoutKey } from "data";
 import { getData, setUserData, checkIfUserExists } from "../../backend/dataAccess";
 import { AppContext } from "../../contexts/AppContext";
+
+//TODO: Fix local storage issue
 export const HomePage = () => {
   // localStorage.clear();
-  const [loggedIn, setLoggedIn] = useLocalStorage("user");
   const [userId, setUserId] = useLocalStorage("userId");
+  const [loggedIn, setLoggedIn] = useLocalStorage("user");
+  
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
   const [profileActive, setProfileActive] = useState<boolean>(false);
@@ -38,7 +41,9 @@ export const HomePage = () => {
         await checkIfUserExists(res?.uid).then((exists) => {
           if (exists) {
             setLoggedIn("logged_in");
-            res ? setUserId(res?.uid) : null;
+            res ? setUserId(res?.uid) : setUserId('null');
+            console.log(userId);
+            
             getProfile();
           } else {
             console.log("account doesn't exist");
@@ -83,7 +88,6 @@ export const HomePage = () => {
 
   const getProfile = () => {
     const newUserId = userId !== null ? userId : "";
-
     getData("users",newUserId)
       .then((snapshot) => {
         if (snapshot.exists()) {
@@ -112,8 +116,9 @@ export const HomePage = () => {
   }
   useEffect(() => {
     getProfile();
+    
   }, [userId]);
-
+ 
   return (
     <AppContext.Provider
       value={{

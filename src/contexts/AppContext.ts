@@ -18,4 +18,5 @@ export const AppContext = createContext<User>({
         throw new Error("Function not implemented.");
     },
     profileActive:false,
+    userId:""
 });

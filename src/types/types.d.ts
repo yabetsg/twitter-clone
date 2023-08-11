@@ -15,7 +15,8 @@ declare module "login" {
     handleGoogleSignIn: (e: React.MouseEvent<HTMLElement>) => void;
     handleLogout: (e: React.MouseEvent<HTMLElement>) => void;
     showProfile: (value:boolean) => void;
-    profileActive:boolean
+    profileActive:boolean,
+    userId:string|null
   }
 }
 declare module "props"{

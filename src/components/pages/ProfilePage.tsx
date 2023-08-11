@@ -1,7 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
+import { Tweet } from "../tweets/Tweet";
+import { fetchCurrentUserTweets } from "../../backend/dataAccess";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 export const ProfilePage = ({ displayName, username }: ProfileProps) => {
+  const [tweetContent, setTweetContent] = useState<Array<string>>([]);
+  const [userId] = useLocalStorage("userId");
+  const fetchUserTweet = () => {
+    fetchCurrentUserTweets(userId)
+      .then((querySnapshot) => {
+        const matchingDocuments: { tweetId: string; data: any }[] = [];
+        querySnapshot.forEach((doc) => {
+          matchingDocuments.push({ tweetId: doc.id, data: doc.data() });
+        });
+        matchingDocuments.forEach(
+          (collection: {
+            data: { content: string; userId: string };
+            tweetId: string;
+          }) => {
+            const collData = collection.data;
+            setTweetContent((prevState) => [...prevState, collData.content]);
+          }
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  useEffect(() => {    
+    fetchUserTweet();
+  }, []);
   return (
     <>
       <section className="flex flex-col ">
@@ -50,6 +80,12 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
           </button>
         </nav>
       </section>
+
+      <section>{
+        tweetContent.map((value,index)=>{
+          return <Tweet key={index} content={value}/>
+        })
+        }</section>
     </>
   );
 };
