@@ -7,15 +7,18 @@ import { googleAuth } from "../../backend/auth";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { User } from "firebase/auth";
 import { DataWithKey, DataWithoutKey } from "data";
-import { getData, setUserData, checkIfUserExists } from "../../backend/dataAccess";
+import {
+  getData,
+  setUserData,
+  checkIfUserExists,
+} from "../../backend/dataAccess";
 import { AppContext } from "../../contexts/AppContext";
 
-//TODO: Fix local storage issue
 export const HomePage = () => {
   // localStorage.clear();
-  const [userId, setUserId] = useLocalStorage("userId");
-  const [loggedIn, setLoggedIn] = useLocalStorage("user");
-  
+  const [userId, setUserId] = useLocalStorage("userId", "");
+  const [loggedIn, setLoggedIn] = useLocalStorage("user", "");
+
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
   const [profileActive, setProfileActive] = useState<boolean>(false);
@@ -41,10 +44,8 @@ export const HomePage = () => {
         await checkIfUserExists(res?.uid).then((exists) => {
           if (exists) {
             setLoggedIn("logged_in");
-            res ? setUserId(res?.uid) : setUserId('null');
-            console.log(userId);
-            
-            getProfile();
+            res ? localStorage.setItem("id", res?.uid) : null;
+            res ? setUserId(res?.uid) : "null";
           } else {
             console.log("account doesn't exist");
           }
@@ -71,12 +72,13 @@ export const HomePage = () => {
       userAt.replace(/\s/g, "") + Math.floor(Math.random() * 1000).toString();
     const newUserId = userid !== undefined ? userid : "";
     const newDisplayName = displayName !== undefined ? displayName : "";
-    setUserData("users",newUserId, newDisplayName, newUserAt).catch((error) =>
+    setUserData("users", newUserId, newDisplayName, newUserAt).catch((error) =>
       console.log(error)
     );
 
     AuthRes ? setLoggedIn("logged_in") : null;
     AuthRes ? setUserId(AuthRes.uid) : null;
+    AuthRes ? localStorage.setItem("id", AuthRes.uid) : null;
     getProfile();
   };
 
@@ -88,15 +90,16 @@ export const HomePage = () => {
 
   const getProfile = () => {
     const newUserId = userId !== null ? userId : "";
-    getData("users",newUserId)
+
+    getData("users", newUserId)
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data() as DataWithKey | DataWithoutKey;
           if (isDataWithKey(data)) {
             for (const key of Object.keys(data)) {
               const info = data[key];
-              info != undefined ? setDisplayName(info.displayName) : "";
-              info != undefined ? setUsername(info.userName) : "";
+              info !== undefined ? setDisplayName(info.displayName) : "";
+              info !== undefined ? setUsername(info.userName) : "";
             }
           } else {
             setDisplayName(data.displayName);
@@ -111,14 +114,19 @@ export const HomePage = () => {
       });
   };
 
-  const showProfile = (value:boolean)=>{
+  const showProfile = (value: boolean) => {
     setProfileActive(value);
-  }
+  };
   useEffect(() => {
     getProfile();
-    
   }, [userId]);
- 
+
+  // useEffect(() => {
+  //   getProfile();
+  // }, [getProfile, userId]);
+  //  useEffect(()=>{
+  //     //
+  //  },[loggedIn])
   return (
     <AppContext.Provider
       value={{
@@ -129,7 +137,7 @@ export const HomePage = () => {
         handleLogout,
         showProfile,
         profileActive,
-        userId
+        userId,
       }}
     >
       <div className="flex">

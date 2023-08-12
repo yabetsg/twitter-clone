@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react"
-export const useLocalStorage=(key:string):[string | null, (value: string) => void] => {
+import { useState } from 'react';
 
-    const [loggedIn, setLoggedIn] = useState<string>(localStorage.getItem(key) as string);
+export function useLocalStorage(key: string, initialValue: string): [string, (value: string) => void] {
+  const storedValue = localStorage.getItem(key);
+  const initial = storedValue !== null ? storedValue : initialValue;
 
-    useEffect(()=>{
-        localStorage.setItem(key,loggedIn)
-    },[key, loggedIn]);
+  const [value, setValue] = useState<string>(initial);
 
-    return [loggedIn,setLoggedIn];
+  const updateValue = (newValue: string) => {
+    setValue(newValue);
+    localStorage.setItem(key, newValue);
+  };
+
+  return [value, updateValue];
 }
+
+
