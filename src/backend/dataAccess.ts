@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
 import { app } from "./firebase-config";
 
 export const setUserData =  async(collection:string,document:string,displayName:string|null,userName:string) =>{
@@ -22,13 +22,7 @@ export const setTweetData =async (collection:string,document:string,content:stri
     return docData;
   }
 
-  export const fetchCurrentUserTweets = async(userId:string|null) =>{
-    const db = getFirestore(app);
-    const tweetRef = collection(db, "tweets");
-    const q = query(tweetRef,where("userId", "==", userId));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot;
-  }
+  
 
 export const checkIfUserExists = async (userid: string | undefined) => {
     const newUserId = userid !== undefined ? userid : "";

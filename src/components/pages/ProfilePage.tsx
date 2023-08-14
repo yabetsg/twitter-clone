@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
-import { fetchCurrentUserTweets } from "../../backend/dataAccess";
+
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { fetchCurrentUserTweets } from "../../backend/tweets";
 export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<string>>([]);
   const [userId] = useLocalStorage("userId", "");
   const fetchUserTweet = () => {
+    
     fetchCurrentUserTweets(userId)
       .then((querySnapshot) => {
         const matchingDocuments: { tweetId: string; data: any }[] = [];
@@ -29,7 +31,7 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
 
   useEffect(() => {
     fetchUserTweet();
-  }, []);
+  }, [userId]);
 
   return (
     <>
