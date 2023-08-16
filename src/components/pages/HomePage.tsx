@@ -14,6 +14,7 @@ import {
 } from "../../backend/dataAccess";
 import { AppContext } from "../../contexts/AppContext";
 
+
 export const HomePage = () => {
   // localStorage.clear();
   const [userId, setUserId] = useLocalStorage("userId", "");
@@ -121,12 +122,7 @@ export const HomePage = () => {
     getProfile();
   }, [userId]);
 
-  // useEffect(() => {
-  //   getProfile();
-  // }, [getProfile, userId]);
-  //  useEffect(()=>{
-  //     //
-  //  },[loggedIn])
+  
   return (
     <AppContext.Provider
       value={{

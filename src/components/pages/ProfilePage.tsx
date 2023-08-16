@@ -5,33 +5,35 @@ import { Tweet } from "../tweets/Tweet";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { fetchCurrentUserTweets } from "../../backend/tweets";
+import { collection, query, where, onSnapshot, getFirestore, DocumentData, orderBy } from "firebase/firestore";
+import { app } from "../../backend/firebase-config";
 export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<string>>([]);
   const [userId] = useLocalStorage("userId", "");
-  const fetchUserTweet = () => {
+  // const fetchUserTweet = () => {
     
-    fetchCurrentUserTweets(userId)
-      .then((querySnapshot) => {
-        const matchingDocuments: { tweetId: string; data: any }[] = [];
-        querySnapshot.forEach((doc) => {
-          matchingDocuments.push({ tweetId: doc.id, data: doc.data() });
-        });
-        const tweetContents = matchingDocuments.map(
-          (collection: {
-            data: { content: string; userId: string };
-            tweetId: string;
-          }) => collection.data.content
-        );
-        setTweetContent([...tweetContents]);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
-
+  //   fetchCurrentUserTweets(userId)
+  //     .then((querySnapshot) => {
+  //       const matchingDocuments: { tweetId: string; data: any }[] = [];
+  //       querySnapshot.forEach((doc) => {
+  //         matchingDocuments.push({ tweetId: doc.id, data: doc.data() });
+  //       });
+  //       const tweetContents = matchingDocuments.map(
+  //         (collection: {
+  //           data: { content: string; userId: string };
+  //           tweetId: string;
+  //         }) => collection.data.content
+  //       );
+  //       setTweetContent([...tweetContents]);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // };
+  
   useEffect(() => {
-    fetchUserTweet();
-  }, [userId]);
+    fetchCurrentUserTweets(userId,setTweetContent);
+  }, [tweetContent]);
 
   return (
     <>

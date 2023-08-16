@@ -4,16 +4,17 @@ import { AppContext } from "../../contexts/AppContext";
 import { setTweetData } from "../../backend/dataAccess";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import uniqid from "uniqid";
-import {
-  collection,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from "firebase/firestore";
-import { app } from "../../backend/firebase-config";
+// import {
+//   collection,
+//   getDocs,
+//   getFirestore,
+//   query,
+//   where,
+// } from "firebase/firestore";
+// import { app } from "../../backend/firebase-config";
 import { Tweet } from "../tweets/Tweet";
 import { fetchCurrentUserTweets } from "../../backend/tweets";
+
 
 export const MainContent = () => {
   const { profileActive, username, displayName } = useContext(AppContext);
@@ -29,28 +30,28 @@ export const MainContent = () => {
   };
   const [tweetContent, setTweetContent] = useState<Array<string>>([]);
 
-  const fetchUserTweet = () => {
-    fetchCurrentUserTweets(userId)
-      .then((querySnapshot) => {
-        const matchingDocuments: { tweetId: string; data: any }[] = [];
-        querySnapshot.forEach((doc) => {
-          matchingDocuments.push({ tweetId: doc.id, data: doc.data() });
-        });
-        const tweetContents = matchingDocuments.map(
-          (collection: {
-            data: { content: string; userId: string };
-            tweetId: string;
-          }) => collection.data.content
-        );
-        setTweetContent([...tweetContents]);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+  // const fetchUserTweet = () => {
+  //   fetchCurrentUserTweets(userId)
+  //     .then((querySnapshot) => {
+  //       const matchingDocuments: { tweetId: string; data: any }[] = [];
+  //       querySnapshot.forEach((doc) => {
+  //         matchingDocuments.push({ tweetId: doc.id, data: doc.data() });
+  //       });
+  //       const tweetContents = matchingDocuments.map(
+  //         (collection: {
+  //           data: { content: string; userId: string };
+  //           tweetId: string;
+  //         }) => collection.data.content
+  //       );
+  //       setTweetContent([...tweetContents]);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // };
 
   useEffect(()=>{
-    fetchUserTweet();
+    fetchCurrentUserTweets(userId,setTweetContent);
   },[tweetContent])
   return (
     <>
@@ -92,11 +93,11 @@ export const MainContent = () => {
 
             <section className="">
               <div>
-              {/* <section>
+              <section>
         {tweetContent.map((value, index) => {
           return <Tweet key={index} content={value} />;
         })}
-      </section> */}
+      </section>
               </div>
             </section>
           </>

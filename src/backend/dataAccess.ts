@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, setDoc, where } from "firebase/firestore";
 import { app } from "./firebase-config";
 
 export const setUserData =  async(collection:string,document:string,displayName:string|null,userName:string) =>{
@@ -21,7 +21,23 @@ export const setTweetData =async (collection:string,document:string,content:stri
     const docData = await getDoc(doc(db,collection,document))
     return docData;
   }
-
+  export const readTweet = ()=>{
+    const db = getFirestore(app);
+    const q = query(collection(db, "cities"), where("state", "==", "CA"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+            console.log("New city: ", change.doc.data());
+        }
+        if (change.type === "modified") {
+            console.log("Modified city: ", change.doc.data());
+        }
+        if (change.type === "removed") {
+            console.log("Removed city: ", change.doc.data());
+        }
+      });
+    });
+  }
   
 
 export const checkIfUserExists = async (userid: string | undefined) => {
