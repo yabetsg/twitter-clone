@@ -1,7 +1,7 @@
 import { collection, doc, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, setDoc, where } from "firebase/firestore";
 import { app } from "./firebase-config";
 
-export const setUserData =  async(collection:string,document:string,displayName:string|null,userName:string) =>{
+export const setUserData =  async(collection:string,document:string,displayName:string|null|undefined,userName:string) =>{
     const db = getFirestore(app);
     await setDoc(doc(db,collection,document),{
       displayName:displayName,

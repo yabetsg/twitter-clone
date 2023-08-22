@@ -9,7 +9,7 @@ export const Tweet = ({content}:{content:string}) => {
   const {displayName,username} = useContext(AppContext)
   return (
     <div className="border-b border-[rgb(47,51,54)] p-2">
-      <div className="flex">
+      <div className="flex py-3">
       <div>
       <img
               src={defaultPfp}
@@ -33,7 +33,6 @@ export const Tweet = ({content}:{content:string}) => {
           <img className="w-5 h-5" src={retweet} alt="" />
           <img className="w-5 h-5" src={like} alt="" />
           <img className="w-5 h-5" src={analytics} alt="" />
-          
           </div>
     </div>
   )

@@ -2,22 +2,7 @@ import { collection, doc, getDoc, getDocs, getFirestore, onSnapshot, orderBy, qu
 
 import { app } from "./firebase-config";
 
-// export const fetchCurrentUserTweets = async (userId: string | null) => {
-//   try {
-//     const db = getFirestore(app);
-//     const tweetRef = collection(db, "tweets");
-//     const q = query(
-//       tweetRef,
-//       where("userId", "==", userId),
-//       orderBy("userId", "desc")
-//     );
-//     const querySnapshot = await getDocs(q);
-//     return querySnapshot;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+
  export const fetchCurrentUserTweets = (userId:string|null,tweetHandler:React.Dispatch<React.SetStateAction<string[]>>)=>{
     const tweets:Array<string> = [];
     const db = getFirestore(app);
