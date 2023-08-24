@@ -24,4 +24,14 @@ declare module "props"{
     username:string | null | undefined;
     displayName:string | null | undefined;
   }
+  export interface ForYouProps{
+    handleTweetSubmit:(e: FormEvent<HTMLFormElement>) => void;
+    inputRef: React.RefObject<HTMLInputElement>;
+    content:Tweet;
+  }
+  export interface TweetProps{
+    content:string;
+    displayName:string | null | undefined;
+    username:string | null | undefined;
+  }
 }

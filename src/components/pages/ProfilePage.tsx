@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { InputHTMLAttributes, SyntheticEvent, useContext, useEffect, useRef, useState } from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
@@ -8,6 +8,7 @@ import { fetchCurrentUserTweets } from "../../backend/tweets";
 import { collection, query, where, onSnapshot, getFirestore, DocumentData, orderBy } from "firebase/firestore";
 import { app } from "../../backend/firebase-config";
 import { setUserData } from "../../backend/dataAccess";
+import { AppContext } from "../../contexts/AppContext";
 export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<string>>([]);
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
@@ -18,6 +19,8 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   const [formPlaceholder,setFormPlaceholder] = useState<string>("Enter new username");
   const [displayButton, setDisplayButton] = useState<boolean>(false);
   const [newUserInfo, setNewUserInfo] = useState<{username:string|undefined,displayName:string|undefined}>()
+ 
+
   useEffect(() => {
     fetchCurrentUserTweets(userId,setTweetContent);
   }, []);
@@ -112,7 +115,7 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
 
       <section>
         {tweetContent.map((value, index) => {
-          return <Tweet key={index} content={value} />;
+          return <Tweet displayName={displayName} username={username} key={index} content={value} />;
         })}
       </section>
     </>

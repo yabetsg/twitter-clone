@@ -1,5 +1,6 @@
 import { collection, doc, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, setDoc, where } from "firebase/firestore";
 import { app } from "./firebase-config";
+import { getDate } from "../utils/dateFormatter";
 
 export const setUserData =  async(collection:string,document:string,displayName:string|null|undefined,userName:string) =>{
     const db = getFirestore(app);
@@ -13,7 +14,8 @@ export const setTweetData =async (collection:string,document:string,content:stri
       const db = getFirestore(app);
       await setDoc(doc(db,collection,document),{
           content:content,
-          userId:userId
+          userId:userId,
+          date: getDate()
       })
 }
  export const getData = async (collection:string,document:string)=>{

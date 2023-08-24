@@ -5,8 +5,9 @@ import comment from "/src/assets/comment.svg"
 import like from "/src/assets/like.svg"
 import retweet from "/src/assets/retweet.svg"
 import analytics from "/src/assets/analytics.svg"
-export const Tweet = ({content}:{content:string}) => {
-  const {displayName,username} = useContext(AppContext)
+import { TweetProps } from "props";
+export const Tweet = ({content,displayName,username}:TweetProps) => {
+  // const {displayName,username} = useContext(AppContext)
   return (
     <div className="border-b border-[rgb(47,51,54)] p-2">
       <div className="flex py-3">
