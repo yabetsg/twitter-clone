@@ -14,7 +14,8 @@ import uniqid from "uniqid";
 import { Tweet } from "../tweets/Tweet";
 import { fetchCurrentUserTweets, fetchForYouTweets } from "../../backend/tweets";
 import { ForYouPage } from "./ForYouPage";
-
+import { ITweet } from "tweet";
+//TODO: tweets disapear on reload 
 
 export const MainContent = () => {
   const { profileActive, username, displayName } = useContext(AppContext);
@@ -24,17 +25,19 @@ export const MainContent = () => {
   const [forYouPageSelected, setForYouPageSelected] = useState<string>(
     "underline underline-offset-[15px] decoration-[rgb(29,155,240)]"
   );
-  const [followingPageSelected, setFollowingPageSelected] =
-    useState<string>("");
+  const [followingPageSelected, setFollowingPageSelected] = useState<string>("");
+  const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
+  const [content, setContent] = useState<string>();
+
   const handleTweetSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const tweet = inputRef.current ? inputRef.current.value : "";
     inputRef.current ? (inputRef.current.value = "") : null;
+    setContent(tweet)
     setTweetData("tweets", uniqid(), tweet, userId).catch((error) =>
       console.log(error)
     );
   };
-  const [tweetContent, setTweetContent] = useState<Array<object>>([]);
 
   const handlePageSelection = (event: React.MouseEvent<HTMLElement>) => {
     const element = event.target as HTMLElement;
@@ -51,9 +54,11 @@ export const MainContent = () => {
     }
     
   };
+
+  
   useEffect(() => {
     fetchForYouTweets(setTweetContent);
-  }, [tweetContent]);
+  }, []);
   return (
     <>
       <div className="w-[45%]  text-white bg-black ml-[25%]  border-[rgb(47,51,54)] border-x border-collapse">
@@ -78,15 +83,14 @@ export const MainContent = () => {
                 </button>
               </div>
             </section>
-
             <ForYouPage
               handleTweetSubmit={handleTweetSubmit}
               inputRef={inputRef}
               content={tweetContent.map((value, index) => {
-                return <Tweet key={index} content={value} displayName={undefined} username={undefined} />;
+                return [<Tweet key={index} content={value.content} displayName={value.displayName} username={value.username} />];
               })}
             ></ForYouPage>
-            
+           
           </>
         ) : (
           <ProfilePage displayName={displayName} username={username} />

@@ -19,6 +19,14 @@ declare module "login" {
     userId:string|null
   }
 }
+
+declare module "tweet"{
+  export interface ITweet{
+    content:string;
+    displayName:string;
+    username:string;
+  }
+}
 declare module "props"{
   export interface ProfileProps{
     username:string | null | undefined;

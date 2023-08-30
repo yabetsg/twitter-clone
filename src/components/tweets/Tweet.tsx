@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import defaultPfp from "../../assets/default.png";
 import { AppContext } from "../../contexts/AppContext";
 import comment from "/src/assets/comment.svg"
@@ -7,7 +7,7 @@ import retweet from "/src/assets/retweet.svg"
 import analytics from "/src/assets/analytics.svg"
 import { TweetProps } from "props";
 export const Tweet = ({content,displayName,username}:TweetProps) => {
-  // const {displayName,username} = useContext(AppContext)
+  
   return (
     <div className="border-b border-[rgb(47,51,54)] p-2">
       <div className="flex py-3">

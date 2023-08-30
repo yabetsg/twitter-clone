@@ -32,7 +32,7 @@ export const ForYouPage = ({
         </form>
       </section>
       <div>
-        <section>{content}</section>
+        <section>{...[content]}</section>
       </div>
     </>
   );
