@@ -12,10 +12,14 @@ import { setTweetData } from "../../backend/dataAccess";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import uniqid from "uniqid";
 import { Tweet } from "../tweets/Tweet";
-import { fetchCurrentUserTweets, fetchForYouTweets } from "../../backend/tweets";
+import {
+  fetchCurrentUserTweets,
+  fetchForYouTweets,
+} from "../../backend/tweets";
 import { ForYouPage } from "./ForYouPage";
 import { ITweet } from "tweet";
-//TODO: tweets disapear on reload 
+import { FollowingPage } from "./FollowingPage";
+
 
 export const MainContent = () => {
   const { profileActive, username, displayName } = useContext(AppContext);
@@ -25,15 +29,18 @@ export const MainContent = () => {
   const [forYouPageSelected, setForYouPageSelected] = useState<string>(
     "underline underline-offset-[15px] decoration-[rgb(29,155,240)]"
   );
-  const [followingPageSelected, setFollowingPageSelected] = useState<string>("");
+  const [followingPageSelected, setFollowingPageSelected] =
+    useState<string>("");
   const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
   const [content, setContent] = useState<string>();
+  const [loadForYou, setLoadForYou] = useState<boolean>(true);
+  const [loadFollowing, setLoadFollowing] = useState<boolean>(false);
 
   const handleTweetSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const tweet = inputRef.current ? inputRef.current.value : "";
     inputRef.current ? (inputRef.current.value = "") : null;
-    setContent(tweet)
+    setContent(tweet);
     setTweetData("tweets", uniqid(), tweet, userId).catch((error) =>
       console.log(error)
     );
@@ -46,16 +53,18 @@ export const MainContent = () => {
         "underline underline-offset-[15px] decoration-[rgb(29,155,240)]"
       );
       setForYouPageSelected("");
+      setLoadForYou(false);
+      setLoadFollowing(true);
     } else if (element.id === "for-you") {
       setFollowingPageSelected("");
       setForYouPageSelected(
         "underline underline-offset-[15px] decoration-[rgb(29,155,240)]"
       );
+      setLoadForYou(true);
+      setLoadFollowing(false);
     }
-    
   };
 
-  
   useEffect(() => {
     fetchForYouTweets(setTweetContent);
   }, []);
@@ -83,14 +92,22 @@ export const MainContent = () => {
                 </button>
               </div>
             </section>
-            <ForYouPage
-              handleTweetSubmit={handleTweetSubmit}
-              inputRef={inputRef}
-              content={tweetContent.map((value, index) => {
-                return [<Tweet key={index} content={value.content} displayName={value.displayName} username={value.username} />];
-              })}
-            ></ForYouPage>
-           
+            {loadForYou ? (
+              <ForYouPage
+                handleTweetSubmit={handleTweetSubmit}
+                inputRef={inputRef}
+                content={tweetContent.map((value, index) => {
+                  return [
+                    <Tweet
+                      key={index}
+                      content={value.content}
+                      displayName={value.displayName}
+                      username={value.username}
+                    />,
+                  ];
+                })}
+              ></ForYouPage>
+            ) : null}
           </>
         ) : (
           <ProfilePage displayName={displayName} username={username} />

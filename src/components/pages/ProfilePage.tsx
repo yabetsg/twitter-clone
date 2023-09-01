@@ -1,54 +1,90 @@
-import React, { InputHTMLAttributes, SyntheticEvent, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  InputHTMLAttributes,
+  SyntheticEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { fetchCurrentUserTweets } from "../../backend/tweets";
-import { collection, query, where, onSnapshot, getFirestore, DocumentData, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  getFirestore,
+  DocumentData,
+  orderBy,
+} from "firebase/firestore";
 import { app } from "../../backend/firebase-config";
 import { setUserData } from "../../backend/dataAccess";
 import { AppContext } from "../../contexts/AppContext";
+import { ITweet } from "tweet";
 export const ProfilePage = ({ displayName, username }: ProfileProps) => {
-  const [tweetContent, setTweetContent] = useState<Array<string>>([]);
+  const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
 
   const [userId] = useLocalStorage("userId", "");
   const userInput = useRef<HTMLInputElement>(null);
+  // let displayName = useRef<string | undefined>(null);
   const [formTitle, setFormTitle] = useState<string>("Change your username");
-  const [formPlaceholder,setFormPlaceholder] = useState<string>("Enter new username");
+  const [formPlaceholder, setFormPlaceholder] =
+    useState<string>("Enter new username");
   const [displayButton, setDisplayButton] = useState<boolean>(false);
-  const [newUserInfo, setNewUserInfo] = useState<{username:string|undefined,displayName:string|undefined}>()
- 
+  const [newUserInfo, setNewUserInfo] = useState<{
+    username: string | undefined;
+    displayName: string | undefined;
+  }>();
 
   useEffect(() => {
-    fetchCurrentUserTweets(userId,setTweetContent);
+    console.log("d");
+
+    fetchCurrentUserTweets(userId, setTweetContent);
   }, []);
-  
-  const handleNextBtn = () =>{
+
+  const handleNextBtn = () => {
     setFormTitle("Change your display name");
     setFormPlaceholder("Enter new display name");
-    setDisplayButton(prevState=>!prevState);
-    setNewUserInfo({username:userInput.current?.value,displayName:''})
-    userInput.current?.value ?  userInput.current.value = '' : null;
-    
-  }
-  const handleSetupForm = (event:SyntheticEvent)=>{
-      event.preventDefault();
-      setNewUserInfo(prevState=>({username:prevState?.username,displayName:userInput.current?.value}));
-      userInput.current?.value ?  userInput.current.value = '' : null;
-      setDisplaySetupModal(prevState=>!prevState);
+    setDisplayButton((prevState) => !prevState);
+    setNewUserInfo({ username: userInput.current?.value, displayName: "" });
+    userInput.current?.value ? (userInput.current.value = "") : null;
+  };
+  const handleSetupForm = (event: SyntheticEvent) => {
+    event.preventDefault();
+    // console.log(userInput.current?.value);
 
-  }
-  useEffect(()=>{
-    if(newUserInfo?.displayName){
-      const newDisplayName = newUserInfo?.displayName
-      const newUserName = newUserInfo?.username?newUserInfo?.username:"error";
+    setNewUserInfo((prevState) => ({
+      username: prevState?.username,
+      displayName: userInput.current?.value,
+    }));
+    // display.current = userInput.current?.value;
+    userInput.current?.value ? (userInput.current.value = "") : null;
+    setDisplaySetupModal((prevState) => !prevState);
+  };
+  useEffect(() => {
+    setNewUserInfo((prevState) => ({
+      username: prevState?.username,
+      displayName: prevState?.displayName,
+    }));
+  }, [newUserInfo?.displayName]);
+  useEffect(() => {
+    // console.log(display.current);
+    if (newUserInfo?.displayName) {
+      const newDisplayName = newUserInfo?.displayName;
+      const newUserName = newUserInfo?.username
+        ? newUserInfo?.username
+        : "error";
+
       setUserData("users", userId, newDisplayName, newUserName).catch((error) =>
         console.log(error)
       );
     }
-  },[newUserInfo?.displayName]);
+  }, [newUserInfo?.displayName, userId]);
   return (
     <>
       <section className="flex flex-col ">
@@ -61,9 +97,12 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
             ></img>
           </div>
         </div>
-        <button className="z-30 flex self-end px-3 py-2 m-2 rounded-full outline outline-white" onClick={()=>{
-          setDisplaySetupModal(prevState=>!prevState)
-        }}>
+        <button
+          className="z-30 flex self-end px-3 py-2 m-2 rounded-full outline outline-white"
+          onClick={() => {
+            setDisplaySetupModal((prevState) => !prevState);
+          }}
+        >
           Set up Profile
         </button>
       </section>
@@ -100,22 +139,46 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
         </nav>
       </section>
 
-        
-      {displaySetupModal?<section className="">
-          <form action="" method="" onSubmit={handleSetupForm}>
-          <div className="absolute w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 bg-gray-800 z-40 top-1/2 left-1/2 max-sm:w-full max-sm:h-full text-center rounded-lg flex flex-col gap-8 p-20 justify-center">
-            <div className="text-2xl font-extrabold text-white ">{formTitle}</div>
-            <input className="p-3 text-black rounded-full placeholder:p-2" placeholder={formPlaceholder} ref={userInput}></input>
-            {!displayButton?<button className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold" onClick={handleNextBtn}>Next</button>:null}
-            {displayButton?<button className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold">Done</button>:null}
-          </div>
+      {displaySetupModal ? (
+        <section className="">
+          <form onSubmit={handleSetupForm}>
+            <div className="absolute w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 bg-gray-800 z-40 top-1/2 left-1/2 max-sm:w-full max-sm:h-full text-center rounded-lg flex flex-col gap-8 p-20 justify-center">
+              <div className="text-2xl font-extrabold text-white ">
+                {formTitle}
+              </div>
+              <input
+                className="p-3 text-black rounded-full placeholder:p-2"
+                placeholder={formPlaceholder}
+                ref={userInput}
+              ></input>
+              {!displayButton ? (
+                <button
+                  className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold"
+                  onClick={handleNextBtn}
+                >
+                  Next
+                </button>
+              ) : null}
+              {displayButton ? (
+                <button className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold">
+                  Done
+                </button>
+              ) : null}
+            </div>
           </form>
-      </section>:null}
-      
+        </section>
+      ) : null}
 
       <section>
         {tweetContent.map((value, index) => {
-          return <Tweet displayName={displayName} username={username} key={index} content={value} />;
+          return (
+            <Tweet
+              displayName={displayName}
+              username={username}
+              key={index}
+              content={value.content}
+            />
+          );
         })}
       </section>
     </>
