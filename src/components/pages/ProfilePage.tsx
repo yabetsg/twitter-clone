@@ -31,7 +31,7 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
 
   const [userId] = useLocalStorage("userId", "");
   const userInput = useRef<HTMLInputElement>(null);
-  // let displayName = useRef<string | undefined>(null);
+
   const [formTitle, setFormTitle] = useState<string>("Change your username");
   const [formPlaceholder, setFormPlaceholder] =
     useState<string>("Enter new username");
@@ -40,41 +40,35 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
     username: string | undefined;
     displayName: string | undefined;
   }>();
+  const [userValue, setUserValue] = useState("");
+
 
   useEffect(() => {
-    console.log("d");
-
     fetchCurrentUserTweets(userId, setTweetContent);
-  }, []);
+  }, [userId]);
 
   const handleNextBtn = () => {
     setFormTitle("Change your display name");
     setFormPlaceholder("Enter new display name");
     setDisplayButton((prevState) => !prevState);
-    setNewUserInfo({ username: userInput.current?.value, displayName: "" });
-    userInput.current?.value ? (userInput.current.value = "") : null;
+
+    setNewUserInfo({ username: userValue, displayName: "" });
+    setUserValue("");
   };
   const handleSetupForm = (event: SyntheticEvent) => {
     event.preventDefault();
-    // console.log(userInput.current?.value);
 
     setNewUserInfo((prevState) => ({
       username: prevState?.username,
-      displayName: userInput.current?.value,
+      displayName: userValue,
     }));
-    // display.current = userInput.current?.value;
-    userInput.current?.value ? (userInput.current.value = "") : null;
+    setUserValue("")
     setDisplaySetupModal((prevState) => !prevState);
   };
+ 
   useEffect(() => {
-    setNewUserInfo((prevState) => ({
-      username: prevState?.username,
-      displayName: prevState?.displayName,
-    }));
-  }, [newUserInfo?.displayName]);
-  useEffect(() => {
-    // console.log(display.current);
-    if (newUserInfo?.displayName) {
+    if (newUserInfo?.displayName||newUserInfo?.username) {
+      
       const newDisplayName = newUserInfo?.displayName;
       const newUserName = newUserInfo?.username
         ? newUserInfo?.username
@@ -84,7 +78,7 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
         console.log(error)
       );
     }
-  }, [newUserInfo?.displayName, userId]);
+  }, [newUserInfo?.displayName, newUserInfo?.username, userId]);
   return (
     <>
       <section className="flex flex-col ">
@@ -149,8 +143,11 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
               <input
                 className="p-3 text-black rounded-full placeholder:p-2"
                 placeholder={formPlaceholder}
-                ref={userInput}
+                value={userValue}
+                onChange={(e)=>setUserValue(e.target.value)}
               ></input>
+              
+             
               {!displayButton ? (
                 <button
                   className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold"
