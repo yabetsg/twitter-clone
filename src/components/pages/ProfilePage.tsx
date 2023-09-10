@@ -30,7 +30,6 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
 
   const [userId] = useLocalStorage("userId", "");
-  const userInput = useRef<HTMLInputElement>(null);
 
   const [formTitle, setFormTitle] = useState<string>("Change your username");
   const [formPlaceholder, setFormPlaceholder] =
