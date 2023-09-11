@@ -22,9 +22,11 @@ declare module "login" {
 
 declare module "tweet"{
   export interface ITweet{
+    tweetId:string;
     content:string;
     displayName:string;
     username:string;
+    likes:number;
   }
 }
 declare module "props"{
@@ -38,8 +40,10 @@ declare module "props"{
     content:Tweet;
   }
   export interface TweetProps{
+    tweetId:string;
     content:string;
     displayName:string | null | undefined;
     username:string | null | undefined;
+    likes:number;
   }
 }

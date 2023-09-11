@@ -28,30 +28,34 @@ export const fetchCurrentUserTweets = (
     where("userId", "==", userId),
     orderBy("userId", "desc")
   );
-  
-   onSnapshot(q, (snapshot) => {
+
+  onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       const tweetData = change.doc.data() as {
+        tweetId: string;
         content: string;
         userId: string;
+        likes: number;
       };
       const userRef = doc(db, "users", tweetData.userId);
       if (change.type === "added") {
         const tweetPromise = getDoc(userRef)
-        .then((doc) => {
-          if (doc.exists()) {
-            const userData = doc.data() as {
-              displayName: string;
-              userName: string;
-            };
-            tweets.push({
-              content: tweetData.content,
-              displayName: userData.displayName,
-              username: userData.displayName,
-            });
-          }
-        })
-        .catch((error) => console.log(error));
+          .then((doc) => {
+            if (doc.exists()) {
+              const userData = doc.data() as {
+                displayName: string;
+                userName: string;
+              };
+              tweets.push({
+                tweetId: tweetData.tweetId,
+                content: tweetData.content,
+                displayName: userData.displayName,
+                username: userData.displayName,
+                likes: tweetData.likes,
+              });
+            }
+          })
+          .catch((error) => console.log(error));
         tweetPromises.push(tweetPromise);
       }
       if (change.type === "modified") {
@@ -61,11 +65,13 @@ export const fetchCurrentUserTweets = (
         //
       }
     });
-    
-    Promise.all(tweetPromises).then(()=>{
-      tweetHandler(tweets);
-    }).catch(error=>console.log(error))
-  }); 
+
+    Promise.all(tweetPromises)
+      .then(() => {
+        tweetHandler(tweets);
+      })
+      .catch((error) => console.log(error));
+  });
 };
 
 export const fetchForYouTweets = (
@@ -79,8 +85,10 @@ export const fetchForYouTweets = (
   onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       const tweetData = change.doc.data() as {
+        tweetId: string;
         content: string;
         userId: string;
+        likes: number;
       };
       const userRef = doc(db, "users", tweetData.userId);
       if (change.type === "added") {
@@ -92,9 +100,11 @@ export const fetchForYouTweets = (
                 userName: string;
               };
               tweets.push({
+                tweetId: tweetData.tweetId,
                 content: tweetData.content,
                 displayName: userData.displayName,
                 username: userData.userName,
+                likes: tweetData.likes,
               });
             }
           })

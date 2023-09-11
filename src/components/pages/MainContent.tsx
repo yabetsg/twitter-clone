@@ -38,10 +38,11 @@ export const MainContent = () => {
 
   const handleTweetSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const tweetId = uniqid();
     const tweet = inputRef.current ? inputRef.current.value : "";
     inputRef.current ? (inputRef.current.value = "") : null;
     setContent(tweet);
-    setTweetData("tweets", uniqid(), tweet, userId).catch((error) =>
+    setTweetData("tweets", tweetId, tweet, userId).catch((error) =>
       console.log(error)
     );
   };
@@ -67,7 +68,7 @@ export const MainContent = () => {
 
   useEffect(() => {
     fetchForYouTweets(setTweetContent);
-  }, []);
+  }, [content]);
   return (
     <>
       <div className="w-[45%]  text-white bg-black ml-[25%]  border-[rgb(47,51,54)] border-x border-collapse">
@@ -103,6 +104,8 @@ export const MainContent = () => {
                       content={value.content}
                       displayName={value.displayName}
                       username={value.username}
+                      likes={value.likes}
+                      tweetId={value.tweetId}
                     />,
                   ];
                 })}

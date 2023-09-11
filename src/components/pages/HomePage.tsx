@@ -15,10 +15,8 @@ import {
 import { AppContext } from "../../contexts/AppContext";
 
 export const HomePage = () => {
-  // localStorage.clear();
   const [userId, setUserId] = useLocalStorage("userId", "");
   const [loggedIn, setLoggedIn] = useLocalStorage("user", "");
-
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
   const [profileActive, setProfileActive] = useState<boolean>(false);

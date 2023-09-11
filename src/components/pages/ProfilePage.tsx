@@ -173,6 +173,8 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
               username={username}
               key={index}
               content={value.content}
+              likes={value.likes}
+              tweetId={value.tweetId}
             />
           );
         })}
