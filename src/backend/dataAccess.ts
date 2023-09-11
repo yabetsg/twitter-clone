@@ -10,11 +10,14 @@ import {
   setDoc,
   where,
   updateDoc,
+  deleteDoc
 } from "firebase/firestore";
 import { getDatabase, ref, child, push, update, set } from "firebase/database";
 import { app } from "./firebase-config";
 import { getDate } from "../utils/dateFormatter";
 import firebase from "firebase/app";
+
+
 export const setUserData = async (
   collection: string,
   document: string,
@@ -97,10 +100,30 @@ export const updateData = (tweetId: string, newLikes: number) => {
     .catch((error) => console.log(error));
 };
 
+export const deleteLikedData = (userid:string,tweetId: string) => {
+  const db = getFirestore(app);
+   deleteDoc(doc(db,"likes",userid,"tweets",tweetId)).then(()=>{
+    console.log("deleted")
+   }).catch(error=>console.log(error));
+
+  
+};
+
 export const checkIfUserExists = async (userid: string | undefined) => {
   const newUserId = userid !== undefined ? userid : "";
   let result = false;
   if ((await getData("users", newUserId)).exists()) {
+    result = true;
+  } else {
+    result = false;
+  }
+  return result;
+};
+
+export const checkIfUserhasLiked = async (userid: string,tweetId:string) => {
+  const db = getFirestore(app);
+  let result = false;
+  if ((await getDoc(doc(db,"likes",userid,"tweets",tweetId))).exists()) {
     result = true;
   } else {
     result = false;

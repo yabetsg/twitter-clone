@@ -6,9 +6,10 @@ import like from "/src/assets/like.svg";
 import retweet from "/src/assets/retweet.svg";
 import analytics from "/src/assets/analytics.svg";
 import { TweetProps } from "props";
-import { getData, setLikesData, updateData } from "../../backend/dataAccess";
+import {  checkIfUserhasLiked, deleteLikedData, getData, setLikesData, updateData } from "../../backend/dataAccess";
 import { signOut } from "firebase/auth";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { ITweet } from "tweet";
 export const Tweet = ({
   tweetId,
   content,
@@ -18,27 +19,35 @@ export const Tweet = ({
   
 }: TweetProps) => {
   const [likeDisplay, setLikeDisplay] = useState(likes);
-  const [hasLiked, setHasLiked] = useState(false);
+  // const [hasLiked, setHasLiked] = useState(false);
   const [userId] = useLocalStorage("userId", "");
   const likesRef = useRef<HTMLDivElement>(null);
-  
   const handleLikes = () => {
     const tweetId = likesRef.current?.id?likesRef.current?.id:"";
-    const newUserId = userId ? userId : "";
-    console.log(userId)
-    console.log(tweetId)
-    setLikesData(userId,tweetId,"hjhfjh",10).catch(error=>console.log(error));
-    if(hasLiked){
-      setLikeDisplay(likeDisplay - 1)
-      updateData(tweetId,likeDisplay-1);
-    }else{
-      setLikeDisplay(likeDisplay + 1);
-      updateData(tweetId,likeDisplay+1);
-    }
-    setHasLiked(prevState=>!prevState);
+    
+    checkIfUserhasLiked(userId,tweetId).then((liked)=>{
+      // setHasLiked(liked);
+      if(liked){
+        setLikeDisplay(likeDisplay - 1)
+        updateData(tweetId,likeDisplay-1);
+        deleteLikedData(userId,tweetId);
+      }else{
+        setLikeDisplay(likeDisplay + 1);
+        updateData(tweetId,likeDisplay+1);
+        getData("tweets",tweetId).then((snapshot)=>{
+          if(snapshot.exists()){
+            const tweetData = snapshot.data() as ITweet;
+            setLikesData(userId,tweetId,tweetData.content,likeDisplay).catch(error=>console.log(error));
+          }
+        }).catch(error=>console.log(error));
+      }
+      // setHasLiked(prevState=>!prevState);
+
+    }).catch(error=>console.log(error));
+  
    
   };
-
+ 
   
   return (
     <div className="border-b border-[rgb(47,51,54)] p-2" id={tweetId} ref={likesRef}>
