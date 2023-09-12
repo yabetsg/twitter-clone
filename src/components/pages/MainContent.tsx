@@ -105,6 +105,7 @@ export const MainContent = () => {
                       displayName={value.displayName}
                       username={value.username}
                       likes={value.likes}
+                      retweets={value.retweets}
                       tweetId={value.tweetId}
                     />,
                   ];

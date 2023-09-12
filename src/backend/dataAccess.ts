@@ -44,6 +44,7 @@ export const setTweetData = async (
     userId: userId,
     date: getDate(),
     likes: 0,
+    retweets:0,
   });
 };
 export const setLikesData = async (
@@ -60,6 +61,27 @@ export const setLikesData = async (
       userId: userId,
       date: getDate(),
       likes: likesCount,
+    });
+    console.log("Document successfully written!");
+  } catch (error) {
+    console.error("Error writing document: ", error);
+  }
+};
+
+export const setRetweetsData = async (
+  userId: string,
+  tweetId: string,
+  content: string,
+  retweetsCount: number
+) => {
+  const db = getFirestore(app);
+  const retweetDocRef = doc(db, "retweets", userId, "tweets", tweetId);
+  try {
+    await setDoc(retweetDocRef, {
+      content: content,
+      userId: userId,
+      date: getDate(),
+      retweets: retweetsCount,
     });
     console.log("Document successfully written!");
   } catch (error) {
@@ -90,7 +112,7 @@ export const readTweet = () => {
   });
 };
 
-export const updateData = (tweetId: string, newLikes: number) => {
+export const updateLikes = (tweetId: string, newLikes: number) => {
   const db = getFirestore(app);
   const docRef = doc(db, "tweets", tweetId);
   updateDoc(docRef, {
@@ -100,13 +122,29 @@ export const updateData = (tweetId: string, newLikes: number) => {
     .catch((error) => console.log(error));
 };
 
+export const updateRetweets = (tweetId: string, newRetweets: number) => {
+  const db = getFirestore(app);
+  const docRef = doc(db, "tweets", tweetId);
+  updateDoc(docRef, {
+    retweets: newRetweets,
+  })
+    .then(() => console.log("updated retweets"))
+    .catch((error) => console.log(error));
+};
+
 export const deleteLikedData = (userid:string,tweetId: string) => {
   const db = getFirestore(app);
    deleteDoc(doc(db,"likes",userid,"tweets",tweetId)).then(()=>{
     console.log("deleted")
    }).catch(error=>console.log(error));
 
-  
+};
+
+export const deleteRetweetedData = (userid:string,tweetId: string) => {
+  const db = getFirestore(app);
+   deleteDoc(doc(db,"retweets",userid,"tweets",tweetId)).then(()=>{
+    console.log("deleted")
+   }).catch(error=>console.log(error));
 };
 
 export const checkIfUserExists = async (userid: string | undefined) => {
@@ -130,3 +168,18 @@ export const checkIfUserhasLiked = async (userid: string,tweetId:string) => {
   }
   return result;
 };
+
+
+
+export const checkIfUserhasRetweeted = async (userid: string,tweetId:string) => {
+  const db = getFirestore(app);
+  let result = false;
+  if ((await getDoc(doc(db,"retweets",userid,"tweets",tweetId))).exists()) {
+    result = true;
+  } else {
+    result = false;
+  }
+  return result;
+};
+
+

@@ -174,6 +174,7 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
               key={index}
               content={value.content}
               likes={value.likes}
+              retweets={value.retweets}
               tweetId={value.tweetId}
             />
           );

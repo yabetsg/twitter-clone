@@ -27,6 +27,7 @@ declare module "tweet"{
     displayName:string;
     username:string;
     likes:number;
+    retweets:number;
   }
 }
 declare module "props"{
@@ -45,5 +46,6 @@ declare module "props"{
     displayName:string | null | undefined;
     username:string | null | undefined;
     likes:number;
+    retweets:number;
   }
 }

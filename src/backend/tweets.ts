@@ -36,6 +36,7 @@ export const fetchCurrentUserTweets = (
         content: string;
         userId: string;
         likes: number;
+        retweets:number;
       };
       const userRef = doc(db, "users", tweetData.userId);
       if (change.type === "added") {
@@ -52,6 +53,7 @@ export const fetchCurrentUserTweets = (
                 displayName: userData.displayName,
                 username: userData.displayName,
                 likes: tweetData.likes,
+                retweets:tweetData.retweets,
               });
             }
           })
@@ -89,6 +91,7 @@ export const fetchForYouTweets = (
         content: string;
         userId: string;
         likes: number;
+        retweets:number;
       };
       const userRef = doc(db, "users", tweetData.userId);
       if (change.type === "added") {
@@ -105,6 +108,7 @@ export const fetchForYouTweets = (
                 displayName: userData.displayName,
                 username: userData.userName,
                 likes: tweetData.likes,
+                retweets:tweetData.retweets,
               });
             }
           })
