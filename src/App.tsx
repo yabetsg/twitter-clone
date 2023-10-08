@@ -9,8 +9,8 @@ import { LoginPage } from './components/pages/LoginPage'
 // } from "firebase/database";
 
 
-import { googleAuth } from './backend/auth'
-import { app } from './backend/firebase-config';
+import { googleAuth } from './backend/auth/auth'
+import { app } from './backend/config/firebase-config';
 // import { useAuthUser } from './hooks/useAuthUser';
 import { MainContent } from './components/pages/MainContent';
 // import { useState } from 'react';

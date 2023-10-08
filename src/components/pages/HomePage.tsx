@@ -3,16 +3,17 @@ import { LoginPage } from "./LoginPage";
 import { MainContent } from "../../components/pages/MainContent";
 import { LeftSidebar } from "../../components/sidebars/LeftSidebar";
 import { RightSidebar } from "../../components/sidebars/RightSidebar";
-import { googleAuth } from "../../backend/auth";
+import { googleAuth } from "../../backend/auth/auth";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { User } from "firebase/auth";
 import { DataWithKey, DataWithoutKey } from "data";
+
+import { AppContext } from "../../contexts/AppContext";
 import {
+  checkIfUserExists,
   getData,
   setUserData,
-  checkIfUserExists,
-} from "../../backend/dataAccess";
-import { AppContext } from "../../contexts/AppContext";
+} from "../../backend/services/userServices";
 
 export const HomePage = () => {
   const [userId, setUserId] = useLocalStorage("userId", "");

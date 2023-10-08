@@ -6,20 +6,21 @@ import like from "/src/assets/like.svg";
 import retweet from "/src/assets/retweet.svg";
 import analytics from "/src/assets/analytics.svg";
 import { TweetProps } from "props";
-import {
-  checkIfUserhasLiked,
-  checkIfUserhasRetweeted,
-  deleteLikedData,
-  deleteRetweetedData,
-  getData,
-  setLikesData,
-  setRetweetsData,
-  updateLikes,
-  updateRetweets,
-} from "../../backend/dataAccess";
-import { signOut } from "firebase/auth";
+
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { ITweet } from "tweet";
+import { CommentModal } from "../comments/CommentModal";
+import {
+  checkIfUserhasLiked,
+  updateTweetField,
+  deleteLikedData,
+  setLikesData,
+  checkIfUserhasRetweeted,
+  deleteRetweetedData,
+  setRetweetsData,
+  setTweetData,
+} from "../../backend/services/tweetServices";
+import { getData } from "../../backend/services/userServices";
 export const Tweet = ({
   tweetId,
   content,
@@ -27,10 +28,14 @@ export const Tweet = ({
   username,
   likes,
   retweets,
+  comments,
 }: TweetProps) => {
-  const [likeDisplay, setLikeDisplay] = useState(likes);
-  const [retweetDisplay, setRetweetDisplay] = useState(retweets);
+  const [likesCount, setLikesCount] = useState(likes);
+  const [retweetCount, setretweetCount] = useState(retweets);
+  const [commentCount, setCommentCount] = useState(comments);
   const [userId] = useLocalStorage("userId", "");
+  const [displayCommentModal, setDisplayCommentModal] = useState(false);
+  const [commentContent, setCommentContent] = useState<string>("");
   const likesRef = useRef<HTMLDivElement>(null);
 
   const handleLikes = () => {
@@ -38,12 +43,12 @@ export const Tweet = ({
     checkIfUserhasLiked(userId, tweetId)
       .then((hasLiked) => {
         if (hasLiked) {
-          setLikeDisplay(likeDisplay - 1);
-          updateLikes(tweetId, likeDisplay - 1);
+          setLikesCount(likesCount - 1);
+          updateTweetField(tweetId, "likes", likesCount - 1);
           deleteLikedData(userId, tweetId);
         } else {
-          setLikeDisplay(likeDisplay + 1);
-          updateLikes(tweetId, likeDisplay + 1);
+          setLikesCount(likesCount + 1);
+          updateTweetField(tweetId, "likes", likesCount + 1);
           getData("tweets", tweetId)
             .then((snapshot) => {
               if (snapshot.exists()) {
@@ -52,7 +57,7 @@ export const Tweet = ({
                   userId,
                   tweetId,
                   tweetData.content,
-                  likeDisplay
+                  likesCount
                 ).catch((error) => console.log(error));
               }
             })
@@ -62,25 +67,46 @@ export const Tweet = ({
       .catch((error) => console.log(error));
   };
 
-  const handleRetweet = ()=>{
+  const handleRetweet = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
-    checkIfUserhasRetweeted(userId,tweetId).then((hasRetweeted)=>{
-        if(hasRetweeted){
-            setRetweetDisplay(retweetDisplay-1);
-            updateRetweets(tweetId,retweetDisplay-1);
-            deleteRetweetedData(userId,tweetId);
-        }else{
-          setRetweetDisplay(retweetDisplay+1);
-          updateRetweets(tweetId,retweetDisplay+1);
-          getData("tweets",tweetId).then((snapshot)=>{
-            if(snapshot.exists()){
-              const tweetData = snapshot.data() as ITweet;
-              setRetweetsData(userId,tweetId,tweetData.content,retweetDisplay+1).catch(error=>console.log(error));
-            }
-          }).catch(error=>console.log(error));
+    checkIfUserhasRetweeted(userId, tweetId)
+      .then((hasRetweeted) => {
+        if (hasRetweeted) {
+          setretweetCount(retweetCount - 1);
+          updateTweetField(tweetId, "retweets", retweetCount - 1);
+          deleteRetweetedData(userId, tweetId);
+        } else {
+          setretweetCount(retweetCount + 1);
+          updateTweetField(tweetId, "retweets", retweetCount + 1);
+          getData("tweets", tweetId)
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                const tweetData = snapshot.data() as ITweet;
+                setRetweetsData(
+                  userId,
+                  tweetId,
+                  tweetData.content,
+                  retweetCount + 1
+                ).catch((error) => console.log(error));
+              }
+            })
+            .catch((error) => console.log(error));
         }
-    }).catch(error=>console.log(error));
-  }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleComment = () => {
+    setDisplayCommentModal(true);
+  };
+  const handleReply = () => {
+    console.log(commentContent);
+
+    setTweetData("comments", tweetId, commentContent, userId)
+      .then(() => setCommentContent(""))
+      .catch((error) => console.log(error));
+    setCommentCount(commentCount + 1);
+  };
 
   return (
     <div
@@ -88,6 +114,17 @@ export const Tweet = ({
       id={tweetId}
       ref={likesRef}
     >
+      {displayCommentModal && (
+        <CommentModal
+          tweetId={tweetId}
+          tweetContent={content}
+          username={username ? username : ""}
+          displayName={displayName ? displayName : ""}
+          handleReply={handleReply}
+          handleChange={setCommentContent}
+        ></CommentModal>
+      )}
+
       <div className="flex py-3">
         <div>
           <img
@@ -106,17 +143,23 @@ export const Tweet = ({
         </div>
       </div>
       <div className="flex justify-around ">
-        <img className="w-5 h-5" src={comment} alt="" />
+        <div className="flex gap-3" onClick={handleComment}>
+          <img className="w-5 h-5" src={comment} alt="" />
+
+          <span className="text-sm text-gray-500">
+            {commentCount > 0 && commentCount}
+          </span>
+        </div>
         <div className="flex gap-3" onClick={handleRetweet}>
-        <img className="w-5 h-5" src={retweet} alt="" />
-        <span  className="text-sm text-gray-500">
-          {retweetDisplay>0&&retweetDisplay}
-        </span>
+          <img className="w-5 h-5" src={retweet} alt="" />
+          <span className="text-sm text-gray-500">
+            {retweetCount > 0 && retweetCount}
+          </span>
         </div>
         <div className="flex gap-3" onClick={handleLikes}>
           <img className="w-5 h-5" src={like} alt="" />
           <span className="text-sm text-gray-500">
-            {likeDisplay > 0 && likeDisplay}
+            {likesCount > 0 && likesCount}
           </span>
         </div>
         <img className="w-5 h-5" src={analytics} alt="" />

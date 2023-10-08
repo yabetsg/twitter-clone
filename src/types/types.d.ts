@@ -28,6 +28,7 @@ declare module "tweet"{
     username:string;
     likes:number;
     retweets:number;
+    comments:number;
   }
 }
 declare module "props"{
@@ -47,5 +48,14 @@ declare module "props"{
     username:string | null | undefined;
     likes:number;
     retweets:number;
+    comments:number;
   }
+  export interface CommentModalProps{
+      tweetId:string;
+      tweetContent:string;
+      username:string;
+      displayName:string;
+      handleReply:()=>void;
+      handleChange:(input:string)=>Dispatch<SetStateAction<string>>;
+  } 
 }

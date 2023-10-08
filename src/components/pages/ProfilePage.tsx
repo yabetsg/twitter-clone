@@ -1,9 +1,8 @@
-import React, {
-  InputHTMLAttributes,
+import {
   SyntheticEvent,
-  useContext,
+
   useEffect,
-  useRef,
+
   useState,
 } from "react";
 import { ProfileProps } from "props";
@@ -11,20 +10,13 @@ import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { fetchCurrentUserTweets } from "../../backend/tweets";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getFirestore,
-  DocumentData,
-  orderBy,
-} from "firebase/firestore";
-import { app } from "../../backend/firebase-config";
-import { setUserData } from "../../backend/dataAccess";
-import { AppContext } from "../../contexts/AppContext";
+
+
+
+
 import { ITweet } from "tweet";
+import { fetchCurrentUserTweets } from "../../backend/services/tweetServices";
+import { setUserData } from "../../backend/services/userServices";
 export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
@@ -175,7 +167,9 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
               content={value.content}
               likes={value.likes}
               retweets={value.retweets}
+              comments={value.retweets}
               tweetId={value.tweetId}
+
             />
           );
         })}

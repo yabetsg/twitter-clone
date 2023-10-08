@@ -1,6 +1,6 @@
 import {
   FormEvent,
-  MouseEventHandler,
+
   useContext,
   useEffect,
   useRef,
@@ -8,17 +8,15 @@ import {
 } from "react";
 import ProfilePage from "./ProfilePage";
 import { AppContext } from "../../contexts/AppContext";
-import { setTweetData } from "../../backend/dataAccess";
+
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import uniqid from "uniqid";
 import { Tweet } from "../tweets/Tweet";
-import {
-  fetchCurrentUserTweets,
-  fetchForYouTweets,
-} from "../../backend/tweets";
+
 import { ForYouPage } from "./ForYouPage";
 import { ITweet } from "tweet";
-import { FollowingPage } from "./FollowingPage";
+import { setTweetData, fetchForYouTweets } from "../../backend/services/tweetServices";
+
 
 
 export const MainContent = () => {
@@ -107,6 +105,7 @@ export const MainContent = () => {
                       likes={value.likes}
                       retweets={value.retweets}
                       tweetId={value.tweetId}
+                      comments={value.comments}
                     />,
                   ];
                 })}
