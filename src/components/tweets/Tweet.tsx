@@ -19,35 +19,39 @@ import {
   deleteRetweetedData,
   setRetweetsData,
   setTweetData,
+  setCommentsData,
 } from "../../backend/services/tweetServices";
 import { getData } from "../../backend/services/userServices";
+import uniqid from "uniqid";
 export const Tweet = ({
   tweetId,
   content,
-  displayName,
-  username,
+  displayNameT,
+  usernameT,
   likes,
   retweets,
   comments,
 }: TweetProps) => {
   const [likesCount, setLikesCount] = useState(likes);
-  const [retweetCount, setretweetCount] = useState(retweets);
+  const [retweetCount, setRetweetCount] = useState(retweets);
   const [commentCount, setCommentCount] = useState(comments);
   const [userId] = useLocalStorage("userId", "");
   const [displayCommentModal, setDisplayCommentModal] = useState(false);
-  const [commentContent, setCommentContent] = useState<string>("");
+  const [commentInput, setCommentInput] = useState<string>("");
   const likesRef = useRef<HTMLDivElement>(null);
+  const { showCommentSection, setCommentContent, displayName, username } = useContext(AppContext);
 
   const handleLikes = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
     checkIfUserhasLiked(userId, tweetId)
       .then((hasLiked) => {
         if (hasLiked) {
-          setLikesCount(likesCount - 1);
+          setLikesCount((prevLikes)=>prevLikes - 1);
           updateTweetField(tweetId, "likes", likesCount - 1);
           deleteLikedData(userId, tweetId);
         } else {
-          setLikesCount(likesCount + 1);
+          setLikesCount((prevLikes)=>prevLikes + 1);
+
           updateTweetField(tweetId, "likes", likesCount + 1);
           getData("tweets", tweetId)
             .then((snapshot) => {
@@ -72,11 +76,11 @@ export const Tweet = ({
     checkIfUserhasRetweeted(userId, tweetId)
       .then((hasRetweeted) => {
         if (hasRetweeted) {
-          setretweetCount(retweetCount - 1);
+          setRetweetCount((prevRetweets)=>prevRetweets - 1);
           updateTweetField(tweetId, "retweets", retweetCount - 1);
           deleteRetweetedData(userId, tweetId);
         } else {
-          setretweetCount(retweetCount + 1);
+          setRetweetCount((prevRetweets)=>prevRetweets + 1);
           updateTweetField(tweetId, "retweets", retweetCount + 1);
           getData("tweets", tweetId)
             .then((snapshot) => {
@@ -100,14 +104,28 @@ export const Tweet = ({
     setDisplayCommentModal(true);
   };
   const handleReply = () => {
-    console.log(commentContent);
-
-    setTweetData("comments", tweetId, commentContent, userId)
-      .then(() => setCommentContent(""))
+    const commentId = uniqid();
+    setCommentsData(commentId,tweetId,commentInput,userId,username,displayName).catch((error)=>console.log(error))
+      .then(() => setCommentInput(""))
       .catch((error) => console.log(error));
-    setCommentCount(commentCount + 1);
+    setCommentCount((prevComments)=>prevComments + 1);
+    setDisplayCommentModal(false);
+    updateTweetField(tweetId,"comments",commentCount+1);
   };
 
+  const handleTweetClick = () => {
+    showCommentSection(true);
+    setCommentContent({
+      tweetId,
+      content,
+      displayNameT,
+      usernameT,
+      likes,
+      retweets,
+      comments,
+    });
+  };
+  
   return (
     <div
       className="border-b border-[rgb(47,51,54)] p-2"
@@ -121,11 +139,12 @@ export const Tweet = ({
           username={username ? username : ""}
           displayName={displayName ? displayName : ""}
           handleReply={handleReply}
-          handleChange={setCommentContent}
+          handleChange={setCommentInput}
+          handleModalDisplay={() => setDisplayCommentModal(false)}
         ></CommentModal>
       )}
 
-      <div className="flex py-3">
+      <div className="flex py-3" onClick={handleTweetClick}>
         <div>
           <img
             src={defaultPfp}
@@ -136,8 +155,8 @@ export const Tweet = ({
 
         <div>
           <div className="text-center flex gap-2 hover:bg-[rgb(28,28,29)]  pl-3">
-            <div className="h-fit w-fit">{displayName}</div>
-            <div className="text-gray-500">@{username}</div>
+            <div className="h-fit w-fit">{displayNameT}</div>
+            <div className="text-gray-500">@{usernameT}</div>
           </div>
           <div className="pl-3 font-extralight">{content}</div>
         </div>

@@ -11,8 +11,13 @@ import { AppContext } from "../../contexts/AppContext";
 import { useContext, useState } from "react";
 
 export const LeftSidebar = () => {
-  const { displayName, username, handleLogout, showProfile } =
-    useContext(AppContext);
+  const {
+    displayName,
+    username,
+    handleLogout,
+    showProfile,
+    showCommentSection,
+  } = useContext(AppContext);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleLogoutModal = () => {
     setShowLogoutModal((prev) => !prev);
@@ -26,7 +31,9 @@ export const LeftSidebar = () => {
       <nav>
         <div
           className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer "
-          onClick={() => showProfile(false)}
+          onClick={() => {
+            showProfile(false);
+          }}
         >
           <span className="">
             <img className="w-7 h-7" src={homeicon} alt="" />
@@ -64,7 +71,10 @@ export const LeftSidebar = () => {
 
         <div
           className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer"
-          onClick={() => showProfile(true)}
+          onClick={() => {
+            showProfile(true);
+            showCommentSection(false);
+          }}
         >
           <span>
             <img className="w-7 h-7" src={profileicon} alt="" />

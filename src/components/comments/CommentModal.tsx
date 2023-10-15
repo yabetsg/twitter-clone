@@ -1,5 +1,6 @@
 import { CommentModalProps } from "props";
 import defaultPfp from "../../assets/default.png";
+import { useState } from "react";
 
 export const CommentModal = ({
   tweetId,
@@ -8,14 +9,18 @@ export const CommentModal = ({
   displayName,
   handleReply,
   handleChange,
+  handleModalDisplay,
 }: CommentModalProps) => {
+
+  
   return (
     <div className="fixed pt-10 inset-0 z-50   bg-[rgba(156,163,175,0.3)] max-sm:p-0">
       <div
         id={tweetId}
         className="max-w-[600px] p-3 mx-auto bg-black rounded-lg opacity-100 max-[598px]:w-full max-sm:h-full "
       >
-        <div>
+        <button className="absolute  px-4 py-2 hover:hover:bg-[rgb(28,28,29)] rounded-full text-xl" onClick={handleModalDisplay}>x</button>
+        <div className="mt-6">
           <img
             src={defaultPfp}
             alt=""

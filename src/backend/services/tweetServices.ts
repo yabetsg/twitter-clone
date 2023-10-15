@@ -11,6 +11,9 @@ import {
   setDoc,
   limit,
   orderBy,
+  getDocs,
+  DocumentData,
+  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { app } from "../config/firebase-config";
 import { getDate } from "../../utils/dateFormatter";
@@ -49,6 +52,7 @@ export const fetchCurrentUserTweets = (
                 userName: string;
               };
               tweets.push({
+                userId: tweetData.userId,
                 tweetId: tweetData.tweetId,
                 content: tweetData.content,
                 displayName: userData.displayName,
@@ -85,7 +89,7 @@ export const fetchForYouTweets = (
 
   const tweets: Array<ITweet> = [];
   const db = getFirestore(app);
-  const q = query(collection(db, "tweets"), orderBy("date", "desc"), limit(3));
+  const q = query(collection(db, "tweets"), orderBy("date", "asc"), limit(3));
   onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       const tweetData = change.doc.data() as {
@@ -106,6 +110,7 @@ export const fetchForYouTweets = (
                 userName: string;
               };
               tweets.push({
+                userId:tweetData.userId,
                 tweetId: tweetData.tweetId,
                 content: tweetData.content,
                 displayName: userData.displayName,
@@ -146,7 +151,6 @@ export const updateTweetField = (
     [fieldName]: newValue,
   };
   updateDoc(docRef, updateObject)
-    .then(() => console.log("updated"))
     .catch((error) => console.log(error));
 };
 
@@ -174,6 +178,16 @@ export const checkIfUserhasRetweeted = async (
   }
   return result;
 };
+
+export const getComments = async (tweetId: string) => {
+  const db = getFirestore(app);
+  const q = query(collection(db, "comments"), where("tweetId", "==", tweetId));
+
+  const querySnapshot = await getDocs(q);
+
+  return querySnapshot;
+};
+
 
 export const readTweet = () => {
   const db = getFirestore(app);
@@ -226,11 +240,39 @@ export const setLikesData = async (
       date: getDate(),
       likes: likesCount,
     });
-    console.log("Document successfully written!");
+  } catch (error) {
+    console.error( error);
+  }
+};
+
+export const setCommentsData = async (
+  commentId:string,
+  tweetId: string,
+  content: string,
+  userId: string | null,
+  username:string| null | undefined,
+  displayName:string| null | undefined,
+) => {
+  const db = getFirestore(app);
+  const commentsDocRef = doc(db, "comments", commentId);
+  try {
+    await setDoc(commentsDocRef, {
+      tweetId: tweetId,
+      content: content,
+      userId: userId,
+      date: getDate(),
+      likes: 0,
+      retweets: 0,
+      comments: 0,
+      username:username,
+      displayName:displayName,
+    });
   } catch (error) {
     console.error("Error writing document: ", error);
   }
 };
+
+
 export const setRetweetsData = async (
   userId: string,
   tweetId: string,

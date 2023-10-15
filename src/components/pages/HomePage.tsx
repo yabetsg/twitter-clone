@@ -14,6 +14,7 @@ import {
   getData,
   setUserData,
 } from "../../backend/services/userServices";
+import { ITweet } from "tweet";
 
 export const HomePage = () => {
   const [userId, setUserId] = useLocalStorage("userId", "");
@@ -21,6 +22,15 @@ export const HomePage = () => {
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
   const [profileActive, setProfileActive] = useState<boolean>(false);
+  const [commentsActive, setCommentActive] = useState<boolean>(false);
+
+  const [commentContent, setCommentContent] = useState({tweetId:"",
+    content:"",
+    displayNameT:"",
+    usernameT:"",
+    likes:0,
+    retweets:0,
+    comments:0,});
 
   const handleGoogleSignUp = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -116,6 +126,15 @@ export const HomePage = () => {
   const showProfile = (value: boolean) => {
     setProfileActive(value);
   };
+
+  const showCommentSection = (value: boolean) => {
+    setCommentActive(value);
+  };
+
+  // const updateCommentContent = (value:string)=>{
+  //   setCommentContent(value);
+  // }
+
   useEffect(() => {
     getProfile();
   }, [userId]);
@@ -131,6 +150,10 @@ export const HomePage = () => {
         showProfile,
         profileActive,
         userId,
+        commentsActive,
+        showCommentSection,
+        commentContent,
+        setCommentContent,
       }}
     >
       <div className="flex">

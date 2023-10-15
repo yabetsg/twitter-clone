@@ -1,18 +1,9 @@
-import {
-  SyntheticEvent,
-
-  useEffect,
-
-  useState,
-} from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-
-
-
 
 import { ITweet } from "tweet";
 import { fetchCurrentUserTweets } from "../../backend/services/tweetServices";
@@ -33,7 +24,6 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   }>();
   const [userValue, setUserValue] = useState("");
 
-
   useEffect(() => {
     fetchCurrentUserTweets(userId, setTweetContent);
   }, [userId]);
@@ -53,13 +43,12 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
       username: prevState?.username,
       displayName: userValue,
     }));
-    setUserValue("")
+    setUserValue("");
     setDisplaySetupModal((prevState) => !prevState);
   };
- 
+
   useEffect(() => {
-    if (newUserInfo?.displayName||newUserInfo?.username) {
-      
+    if (newUserInfo?.displayName || newUserInfo?.username) {
       const newDisplayName = newUserInfo?.displayName;
       const newUserName = newUserInfo?.username
         ? newUserInfo?.username
@@ -135,10 +124,9 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
                 className="p-3 text-black rounded-full placeholder:p-2"
                 placeholder={formPlaceholder}
                 value={userValue}
-                onChange={(e)=>setUserValue(e.target.value)}
+                onChange={(e) => setUserValue(e.target.value)}
               ></input>
-              
-             
+
               {!displayButton ? (
                 <button
                   className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold"
@@ -161,15 +149,14 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
         {tweetContent.map((value, index) => {
           return (
             <Tweet
-              displayName={displayName}
-              username={username}
+              displayNameT={displayName}
+              usernameT={username}
               key={index}
               content={value.content}
               likes={value.likes}
               retweets={value.retweets}
               comments={value.retweets}
               tweetId={value.tweetId}
-
             />
           );
         })}
