@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import defaultPfp from "../../assets/default.png";
 import { AppContext } from "../../contexts/AppContext";
 import backIcon from "../../assets/back.svg";
@@ -18,19 +18,27 @@ import {
   setRetweetsData,
   setTweetData,
   getComments,
+  setCommentsData,
 } from "../../backend/services/tweetServices";
 import { getData } from "../../backend/services/userServices";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { Tweet } from "../tweets/Tweet";
+import uniqid from "uniqid";
 
 export const CommentSection = () => {
-  const { showCommentSection, setCommentContent, commentContent } =
-    useContext(AppContext);
+  const {
+    showCommentSection,
+    setCommentContent,
+    commentContent,
+    username,
+    displayName,
+  } = useContext(AppContext);
   const [likesCount, setLikesCount] = useState(commentContent.likes);
   const [retweetCount, setretweetCount] = useState(commentContent.retweets);
   const [commentCount, setCommentCount] = useState(commentContent.comments);
   const [userId] = useLocalStorage("userId", "");
   const [comments, setComments] = useState<ITweet[]>([]);
+  const [commentInput, setCommentInput] = useState<string>("");
   const [commentProfile, setCommentProfile] = useState<{
     displayName: string;
     userName: string;
@@ -38,7 +46,7 @@ export const CommentSection = () => {
   const tweetRef = useRef<HTMLDivElement>(null);
 
   const handleLikes = () => {
-    const tweetId = tweetRef.current?.id ? tweetRef.current?.id : "";
+    const tweetId = commentContent.tweetId;
     checkIfUserhasLiked(userId, tweetId)
       .then((hasLiked) => {
         if (hasLiked) {
@@ -68,6 +76,8 @@ export const CommentSection = () => {
 
   const handleRetweet = () => {
     const tweetId = tweetRef.current?.id ? tweetRef.current?.id : "";
+    console.log(tweetId);
+
     checkIfUserhasRetweeted(userId, tweetId)
       .then((hasRetweeted) => {
         if (hasRetweeted) {
@@ -95,30 +105,74 @@ export const CommentSection = () => {
       .catch((error) => console.log(error));
   };
 
-  // const handleReply = () => {
-  //   console.log(commentContent);
+  const handleReply = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const commentId = uniqid();
+    const tweetId = commentContent.tweetId;
+    const content = commentContent.content;
+    const displayNameT = commentContent.displayNameT;
+    const usernameT = commentContent.displayNameT;
+    const likes = commentContent.likes;
+    const retweets = commentContent.retweets;
+    const comments = commentCount + 1;
+    setCommentsData(
+      commentId,
+      tweetId,
+      commentInput,
+      userId,
+      username,
+      displayName
+    )
+      .then(() => setCommentInput(""))
+      .catch((error) => console.log(error));
+    setCommentCount((prevComment) => prevComment + 1);
 
-  //   setTweetData("comments", tweetId, commentContent, userId)
-  //     .then(() => setCommentContent(""))
-  //     .catch((error) => console.log(error));
-  //   setCommentCount(commentCount + 1);
-  // };
- 
+    updateTweetField(tweetId, "comments", commentCount + 1);
+    setCommentContent({
+      tweetId,
+      content,
+      displayNameT,
+      usernameT,
+      likes,
+      retweets,
+      comments,
+    });
+  };
 
   useEffect(() => {
-    const fetchComments = async() => {
+    const fetchComments = async () => {
       const tweetid = commentContent.tweetId;
-      const commentData:ITweet[] = []
+      const commentData: ITweet[] = [];
       const commentsSnapshot = await getComments(tweetid);
-      commentsSnapshot.forEach((doc)=>{
+      commentsSnapshot.forEach((doc) => {
         const comment = doc.data() as ITweet;
         commentData.push(comment);
-      })
+      });
       setComments(commentData);
     };
 
-    fetchComments().catch((error)=>console.log(error));
+    fetchComments().catch((error) => console.log(error));
   }, [commentContent.tweetId]);
+
+  useEffect(() => {
+    const tweetId = commentContent.tweetId;
+    const content = commentContent.content;
+    const displayNameT = commentContent.displayNameT;
+    const usernameT = commentContent.displayNameT;
+    const likes = commentContent.likes;
+    const retweets = commentContent.retweets;
+    const comments = commentCount + 1;
+
+    setCommentContent({
+      tweetId,
+      content,
+      displayNameT,
+      usernameT,
+      likes,
+      retweets,
+      comments,
+    });
+  }, [likesCount, retweetCount, commentCount]);
   return (
     <main>
       <section className="p-4">
@@ -179,6 +233,7 @@ export const CommentSection = () => {
         <form
           action=""
           className="flex flex-col border-b border-[rgb(47,51,54)]"
+          onSubmit={handleReply}
         >
           <div className="px-4">
             <div className="absolute mt-4">
@@ -192,7 +247,9 @@ export const CommentSection = () => {
               <input
                 type="text"
                 placeholder="Post your reply"
-                className="w-[90%] pt-2 text-xl bg-inherit outline-none "
+                className="w-[90%] pt-2 text-xl bg-inherit outline-none"
+                onChange={(e) => setCommentInput(e.target.value)}
+                value={commentInput}
               />
             </div>
             <div className="flex justify-end p-2">

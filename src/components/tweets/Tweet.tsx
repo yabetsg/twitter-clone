@@ -53,6 +53,8 @@ export const Tweet = ({
           setLikesCount((prevLikes)=>prevLikes + 1);
 
           updateTweetField(tweetId, "likes", likesCount + 1);
+          const shareLikeCount = likesCount+1;
+          
           getData("tweets", tweetId)
             .then((snapshot) => {
               if (snapshot.exists()) {
@@ -73,6 +75,8 @@ export const Tweet = ({
 
   const handleRetweet = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
+
+    
     checkIfUserhasRetweeted(userId, tweetId)
       .then((hasRetweeted) => {
         if (hasRetweeted) {
@@ -105,7 +109,7 @@ export const Tweet = ({
   };
   const handleReply = () => {
     const commentId = uniqid();
-    setCommentsData(commentId,tweetId,commentInput,userId,username,displayName).catch((error)=>console.log(error))
+    setCommentsData(commentId,tweetId,commentInput,userId,username,displayName)
       .then(() => setCommentInput(""))
       .catch((error) => console.log(error));
     setCommentCount((prevComments)=>prevComments + 1);
@@ -125,7 +129,17 @@ export const Tweet = ({
       comments,
     });
   };
-  
+  useEffect(()=>{
+    setCommentContent({
+      tweetId,
+      content,
+      displayNameT,
+      usernameT,
+      likes,
+      retweets,
+      comments,
+    });
+  },[likesCount, commentCount, retweetCount, setCommentContent, tweetId, content, displayNameT, usernameT, likes, retweets, comments])
   return (
     <div
       className="border-b border-[rgb(47,51,54)] p-2"

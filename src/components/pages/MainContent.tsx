@@ -15,7 +15,7 @@ import {
 import { CommentSection } from "../comments/CommentSection";
 
 export const MainContent = () => {
-  const { profileActive, username, displayName, commentsActive, showProfile , showCommentSection} =
+  const { profileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent} =
     useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
   const [userId] = useLocalStorage("userId", "");
@@ -63,7 +63,7 @@ export const MainContent = () => {
   useEffect(() => {
     
     fetchForYouTweets(setTweetContent);
-  }, [content]);
+  }, [content,commentContent]);
   useEffect(() => {
     if (commentsActive) {
       setLoadForYou(false);
