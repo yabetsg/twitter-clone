@@ -23,6 +23,7 @@ import {
 } from "../../backend/services/tweetServices";
 import { getData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
+import { CommentSection } from "../comments/CommentSection";
 export const Tweet = ({
   tweetId,
   content,
@@ -39,7 +40,7 @@ export const Tweet = ({
   const [displayCommentModal, setDisplayCommentModal] = useState(false);
   const [commentInput, setCommentInput] = useState<string>("");
   const likesRef = useRef<HTMLDivElement>(null);
-  const { showCommentSection, setCommentContent, displayName, username } = useContext(AppContext);
+  const { showCommentSection, setCommentContent, displayName, username, commentContent} = useContext(AppContext);
 
   const handleLikes = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
@@ -49,12 +50,30 @@ export const Tweet = ({
           setLikesCount((prevLikes)=>prevLikes - 1);
           updateTweetField(tweetId, "likes", likesCount - 1);
           deleteLikedData(userId, tweetId);
+          const shareLikeCount = likesCount-1;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareLikeCount,
+            retweets,
+            comments,
+          });
         } else {
           setLikesCount((prevLikes)=>prevLikes + 1);
 
           updateTweetField(tweetId, "likes", likesCount + 1);
           const shareLikeCount = likesCount+1;
-          
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareLikeCount,
+            retweets,
+            comments,
+          });
           getData("tweets", tweetId)
             .then((snapshot) => {
               if (snapshot.exists()) {
@@ -83,9 +102,29 @@ export const Tweet = ({
           setRetweetCount((prevRetweets)=>prevRetweets - 1);
           updateTweetField(tweetId, "retweets", retweetCount - 1);
           deleteRetweetedData(userId, tweetId);
+          const shareRetweetCount = retweetCount-1;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareRetweetCount,
+            retweets,
+            comments,
+          });
         } else {
           setRetweetCount((prevRetweets)=>prevRetweets + 1);
           updateTweetField(tweetId, "retweets", retweetCount + 1);
+          const shareRetweetCount = retweetCount+1;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareRetweetCount,
+            retweets,
+            comments,
+          });
           getData("tweets", tweetId)
             .then((snapshot) => {
               if (snapshot.exists()) {
@@ -115,6 +154,16 @@ export const Tweet = ({
     setCommentCount((prevComments)=>prevComments + 1);
     setDisplayCommentModal(false);
     updateTweetField(tweetId,"comments",commentCount+1);
+    const shareCommentCount = commentCount+1;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareCommentCount,
+            retweets,
+            comments,
+          });
   };
 
   const handleTweetClick = () => {
@@ -129,17 +178,15 @@ export const Tweet = ({
       comments,
     });
   };
-  useEffect(()=>{
-    setCommentContent({
-      tweetId,
-      content,
-      displayNameT,
-      usernameT,
-      likes,
-      retweets,
-      comments,
-    });
-  },[likesCount, commentCount, retweetCount, setCommentContent, tweetId, content, displayNameT, usernameT, likes, retweets, comments])
+  
+  useEffect(() => {
+    // Update state when props change
+    setLikesCount(likes);
+    setRetweetCount(retweets);
+    setCommentCount(comments);
+  }, [likes, retweets, comments]);
+
+ 
   return (
     <div
       className="border-b border-[rgb(47,51,54)] p-2"

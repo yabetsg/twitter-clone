@@ -1,5 +1,5 @@
 import { FormEvent, useContext, useEffect, useRef, useState } from "react";
-import ProfilePage from "./ProfilePage";
+import  { PersonalProfile } from "./PersonalProfile";
 import { AppContext } from "../../contexts/AppContext";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -63,7 +63,9 @@ export const MainContent = () => {
   useEffect(() => {
     
     fetchForYouTweets(setTweetContent);
+    
   }, [content,commentContent]);
+
   useEffect(() => {
     if (commentsActive) {
       setLoadForYou(false);
@@ -118,7 +120,7 @@ export const MainContent = () => {
             )}
           </>
         ) : profileActive ? (
-          <ProfilePage displayName={displayName} username={username} />
+          <PersonalProfile displayName={displayName} username={username} />
         ) : (
           commentsActive && <CommentSection></CommentSection>
         )}

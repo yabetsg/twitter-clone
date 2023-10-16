@@ -8,7 +8,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { ITweet } from "tweet";
 import { fetchCurrentUserTweets } from "../../backend/services/tweetServices";
 import { setUserData } from "../../backend/services/userServices";
-export const ProfilePage = ({ displayName, username }: ProfileProps) => {
+export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
 
@@ -165,4 +165,4 @@ export const ProfilePage = ({ displayName, username }: ProfileProps) => {
   );
 };
 
-export default ProfilePage;
+export default PersonalProfile;

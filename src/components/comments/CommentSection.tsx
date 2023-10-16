@@ -32,9 +32,10 @@ export const CommentSection = () => {
     commentContent,
     username,
     displayName,
+    commentsActive
   } = useContext(AppContext);
   const [likesCount, setLikesCount] = useState(commentContent.likes);
-  const [retweetCount, setretweetCount] = useState(commentContent.retweets);
+  const [retweetCount, setRetweetCount] = useState(commentContent.retweets);
   const [commentCount, setCommentCount] = useState(commentContent.comments);
   const [userId] = useLocalStorage("userId", "");
   const [comments, setComments] = useState<ITweet[]>([]);
@@ -53,9 +54,37 @@ export const CommentSection = () => {
           setLikesCount(likesCount - 1);
           updateTweetField(tweetId, "likes", likesCount - 1);
           deleteLikedData(userId, tweetId);
+          const shareLikeCount = likesCount-1;
+          const content = commentContent.content;
+          const displayNameT = commentContent.displayNameT;
+          const usernameT = commentContent.displayNameT;
+          const retweets = commentContent.retweets;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareLikeCount,
+            retweets,
+            comments,
+          });
         } else {
           setLikesCount(likesCount + 1);
           updateTweetField(tweetId, "likes", likesCount + 1);
+          const shareLikeCount = likesCount+1;
+          const content = commentContent.content;
+          const displayNameT = commentContent.displayNameT;
+          const usernameT = commentContent.displayNameT;
+          const retweets = commentContent.retweets;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareLikeCount,
+            retweets,
+            comments,
+          });
           getData("tweets", tweetId)
             .then((snapshot) => {
               if (snapshot.exists()) {
@@ -75,18 +104,46 @@ export const CommentSection = () => {
   };
 
   const handleRetweet = () => {
-    const tweetId = tweetRef.current?.id ? tweetRef.current?.id : "";
-    console.log(tweetId);
+    const tweetId = commentContent.tweetId;
+   
 
     checkIfUserhasRetweeted(userId, tweetId)
       .then((hasRetweeted) => {
         if (hasRetweeted) {
-          setretweetCount(retweetCount - 1);
+          setRetweetCount(retweetCount - 1);
           updateTweetField(tweetId, "retweets", retweetCount - 1);
           deleteRetweetedData(userId, tweetId);
+          const shareRetweetCount = retweetCount-1;
+          const content = commentContent.content;
+          const displayNameT = commentContent.displayNameT;
+          const usernameT = commentContent.displayNameT;
+          const retweets = commentContent.retweets;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareRetweetCount,
+            retweets,
+            comments,
+          });
         } else {
-          setretweetCount(retweetCount + 1);
+          setRetweetCount(retweetCount + 1);
           updateTweetField(tweetId, "retweets", retweetCount + 1);
+          const shareRetweetCount = retweetCount+1;
+          const content = commentContent.content;
+          const displayNameT = commentContent.displayNameT;
+          const usernameT = commentContent.displayNameT;
+          const retweets = commentContent.retweets;
+          setCommentContent({
+            tweetId,
+            content,
+            displayNameT,
+            usernameT,
+            shareRetweetCount,
+            retweets,
+            comments,
+          });
           getData("tweets", tweetId)
             .then((snapshot) => {
               if (snapshot.exists()) {
@@ -128,6 +185,7 @@ export const CommentSection = () => {
     setCommentCount((prevComment) => prevComment + 1);
 
     updateTweetField(tweetId, "comments", commentCount + 1);
+    const shareCommentCount = commentCount+1;
     setCommentContent({
       tweetId,
       content,
@@ -135,7 +193,7 @@ export const CommentSection = () => {
       usernameT,
       likes,
       retweets,
-      comments,
+      shareCommentCount,
     });
   };
 
@@ -152,27 +210,10 @@ export const CommentSection = () => {
     };
 
     fetchComments().catch((error) => console.log(error));
-  }, [commentContent.tweetId]);
+  }, [commentContent.tweetId,commentCount]);
 
-  useEffect(() => {
-    const tweetId = commentContent.tweetId;
-    const content = commentContent.content;
-    const displayNameT = commentContent.displayNameT;
-    const usernameT = commentContent.displayNameT;
-    const likes = commentContent.likes;
-    const retweets = commentContent.retweets;
-    const comments = commentCount + 1;
 
-    setCommentContent({
-      tweetId,
-      content,
-      displayNameT,
-      usernameT,
-      likes,
-      retweets,
-      comments,
-    });
-  }, [likesCount, retweetCount, commentCount]);
+ 
   return (
     <main>
       <section className="p-4">
