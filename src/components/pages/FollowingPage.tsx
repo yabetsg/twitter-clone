@@ -1,6 +1,21 @@
 import { ForYouProps } from "props";
+import { useContext, useEffect } from "react";
+import { AppContext } from "../../contexts/AppContext";
+
 
 export const FollowingPage = ({ handleTweetSubmit, inputRef }: ForYouProps) => {
+
+  const {userId} = useContext(AppContext);
+
+  useEffect(()=>{
+    // const currentUserId = userId?userId:"";
+    // getFollowingData().then((snapshot)=>{
+    //   snapshot.forEach((doc) => {
+    //     // doc.data() is never undefined for query doc snapshots
+    //     console.log(doc.id, " => ", doc.data());
+    //   });
+    // }).catch((error)=>console.log(error))
+  },[])
   return (
     <>
       <section className="mt-28">

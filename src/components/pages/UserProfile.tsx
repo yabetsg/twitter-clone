@@ -20,18 +20,16 @@ const UserProfile = () => {
     showCommentSection,
     userProfileInfo,
     userId,
-    username,
-    displayName,
   } = useContext(AppContext);
 
   const [tweetContent, setTweetContent] = useState<ITweet[]>([]);
   const [followed, setFollowed] = useState(false);
-  const [followingCount,setFollowingsCount] = useState(0);
-  const [followersCount,setFollowersCount] = useState(0);
+  const [followingCount, setFollowingsCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(0);
 
   const handleFollow = () => {
     const currentUserId = userId ? userId : "";
-    const followedUserId = userProfileInfo.userid
+    const followedUserId = userProfileInfo.userid;
     checkIfUserHasFollowed(currentUserId, followedUserId)
       .then((followed) => {
         if (followed) {
@@ -41,18 +39,23 @@ const UserProfile = () => {
             userProfileInfo.displayName,
             userProfileInfo.username
           ).catch((error) => console.log(error));
-          updateUserData(followedUserId,"followersCount",followersCount-1);
-          deleteFollowData(currentUserId,followedUserId);
-          
-          getData("users",currentUserId).then((data)=>{
-            if(data.exists()){
-              const userData = data.data() as UserData;
-              updateUserData(currentUserId,"followingCount",userData.followingCount-1);
-            }
-          }).catch((error)=>console.log(error));
-          setFollowersCount(prevCount=>prevCount-1);
-          setFollowed(false);
+          updateUserData(followedUserId, "followersCount", followersCount - 1);
+          deleteFollowData(currentUserId, followedUserId);
 
+          getData("users", currentUserId)
+            .then((data) => {
+              if (data.exists()) {
+                const userData = data.data() as UserData;
+                updateUserData(
+                  currentUserId,
+                  "followingCount",
+                  userData.followingCount - 1
+                );
+              }
+            })
+            .catch((error) => console.log(error));
+          setFollowersCount((prevCount) => prevCount - 1);
+          setFollowed(false);
         } else {
           setFollowingData(
             currentUserId,
@@ -60,9 +63,21 @@ const UserProfile = () => {
             userProfileInfo.displayName,
             userProfileInfo.username
           ).catch((error) => console.log(error));
-          updateUserData(followedUserId,"followersCount",followersCount+1);
-          setFollowersCount(prevCount=>prevCount+1);
+          updateUserData(followedUserId, "followersCount", followersCount + 1);
+          setFollowersCount((prevCount) => prevCount + 1);
           setFollowed(true);
+          getData("users", currentUserId)
+            .then((data) => {
+              if (data.exists()) {
+                const userData = data.data() as UserData;
+                updateUserData(
+                  currentUserId,
+                  "followingCount",
+                  userData.followingCount + 1
+                );
+              }
+            })
+            .catch((error) => console.log(error));
         }
       })
       .catch((error) => console.log(error));
@@ -81,35 +96,18 @@ const UserProfile = () => {
       })
       .catch((error) => console.log(error));
 
-      getData("users",followedUser).then((data)=>{
-          if(data.exists()){
-            const userData = data.data() as UserData;
-            setFollowersCount(userData.followersCount);
-            setFollowingsCount(userData.followingCount);
-          }
-      }).catch((error)=>console.log(error));
-  }, [userId, userProfileInfo.userid,followersCount]);
+    getData("users", followedUser)
+      .then((data) => {
+        if (data.exists()) {
+          const userData = data.data() as UserData;
+          setFollowersCount(userData.followersCount);
+          setFollowingsCount(userData.followingCount);
+        }
+      })
+      .catch((error) => console.log(error));
+  }, [userId, userProfileInfo.userid, followersCount]);
 
-  useEffect(()=>{
-    const currentUserId = userId ? userId : "";
-    const followedUser = userProfileInfo.userid;
 
-    getData("users",followedUser).then((data)=>{
-      if(data.exists()){
-        const userData = data.data() as UserData;
-        setFollowersCount(userData.followersCount);
-        setFollowingsCount(userData.followingCount);
-      }
-  }).catch((error)=>console.log(error));
-  
-  getData("users",currentUserId).then((data)=>{
-    if(data.exists()){
-      const userData = data.data() as UserData;
-      updateUserData(currentUserId,"followingCount",userData.followingCount+1);
-    }
-  }).catch((error)=>console.log(error));
-  
-  },[followersCount, userId, userProfileInfo.userid])
 
 
   return (

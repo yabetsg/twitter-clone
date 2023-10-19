@@ -41,17 +41,26 @@ export const Tweet = ({
   const [displayCommentModal, setDisplayCommentModal] = useState(false);
   const [commentInput, setCommentInput] = useState<string>("");
   const likesRef = useRef<HTMLDivElement>(null);
-  const { showCommentSection, setCommentContent, displayName, username, setUserProfileActive, setUserProfileInfo,showProfile,personalProfileActive} = useContext(AppContext);
+  const {
+    showCommentSection,
+    setCommentContent,
+    displayName,
+    username,
+    setUserProfileActive,
+    setUserProfileInfo,
+    showProfile,
+    personalProfileActive,
+  } = useContext(AppContext);
 
   const handleLikes = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
     checkIfUserhasLiked(userId, tweetId)
       .then((hasLiked) => {
         if (hasLiked) {
-          setLikesCount((prevLikes)=>prevLikes - 1);
+          setLikesCount((prevLikes) => prevLikes - 1);
           updateTweetField(tweetId, "likes", likesCount - 1);
           deleteLikedData(userId, tweetId);
-          const shareLikeCount = likesCount-1;
+          const shareLikeCount = likesCount - 1;
           setCommentContent({
             tweetId,
             content,
@@ -62,10 +71,10 @@ export const Tweet = ({
             comments,
           });
         } else {
-          setLikesCount((prevLikes)=>prevLikes + 1);
+          setLikesCount((prevLikes) => prevLikes + 1);
 
           updateTweetField(tweetId, "likes", likesCount + 1);
-          const shareLikeCount = likesCount+1;
+          const shareLikeCount = likesCount + 1;
           setCommentContent({
             tweetId,
             content,
@@ -96,14 +105,13 @@ export const Tweet = ({
   const handleRetweet = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
 
-    
     checkIfUserhasRetweeted(userId, tweetId)
       .then((hasRetweeted) => {
         if (hasRetweeted) {
-          setRetweetCount((prevRetweets)=>prevRetweets - 1);
+          setRetweetCount((prevRetweets) => prevRetweets - 1);
           updateTweetField(tweetId, "retweets", retweetCount - 1);
           deleteRetweetedData(userId, tweetId);
-          const shareRetweetCount = retweetCount-1;
+          const shareRetweetCount = retweetCount - 1;
           setCommentContent({
             tweetId,
             content,
@@ -114,9 +122,9 @@ export const Tweet = ({
             comments,
           });
         } else {
-          setRetweetCount((prevRetweets)=>prevRetweets + 1);
+          setRetweetCount((prevRetweets) => prevRetweets + 1);
           updateTweetField(tweetId, "retweets", retweetCount + 1);
-          const shareRetweetCount = retweetCount+1;
+          const shareRetweetCount = retweetCount + 1;
           setCommentContent({
             tweetId,
             content,
@@ -149,28 +157,34 @@ export const Tweet = ({
   };
   const handleReply = () => {
     const commentId = uniqid();
-    setCommentsData(commentId,tweetId,commentInput,userId,username,displayName)
+    setCommentsData(
+      commentId,
+      tweetId,
+      commentInput,
+      userId,
+      username,
+      displayName
+    )
       .then(() => setCommentInput(""))
       .catch((error) => console.log(error));
-    setCommentCount((prevComments)=>prevComments + 1);
+    setCommentCount((prevComments) => prevComments + 1);
     setDisplayCommentModal(false);
-    updateTweetField(tweetId,"comments",commentCount+1);
-    const shareCommentCount = commentCount+1;
-          setCommentContent({
-            tweetId,
-            content,
-            displayNameT,
-            usernameT,
-            shareCommentCount,
-            retweets,
-            comments,
-          });
+    updateTweetField(tweetId, "comments", commentCount + 1);
+    const shareCommentCount = commentCount + 1;
+    setCommentContent({
+      tweetId,
+      content,
+      displayNameT,
+      usernameT,
+      shareCommentCount,
+      retweets,
+      comments,
+    });
   };
 
   const handleTweetClick = () => {
-    
-      showCommentSection(true); 
-      setCommentContent({
+    showCommentSection(true);
+    setCommentContent({
       tweetId,
       content,
       displayNameT,
@@ -179,33 +193,28 @@ export const Tweet = ({
       retweets,
       comments,
     });
-    
-    
-   
   };
-  
-  const handleUserProfileClick = ()=>{
+
+  const handleUserProfileClick = () => {
     const currentUserId = userId;
-    if(userid === currentUserId){
+    if (userid === currentUserId) {
       showProfile(true);
-    }else{
+    } else {
       setUserProfileActive(true);
       setUserProfileInfo({
-        userid:userid,
-        displayName:displayNameT,
-        username:usernameT
-      })
+        userid: userid,
+        displayName: displayNameT,
+        username: usernameT,
+      });
     }
-    
-  }
+  };
   useEffect(() => {
-    // Update state when props change
+
     setLikesCount(likes);
     setRetweetCount(retweets);
     setCommentCount(comments);
   }, [likes, retweets, comments]);
 
- 
   return (
     <div
       className="border-b border-[rgb(47,51,54)] p-2"
@@ -234,9 +243,14 @@ export const Tweet = ({
         </div>
 
         <div>
-          <div className="flex gap-2 pl-3 text-center hover:cursor-pointer" onClick={handleUserProfileClick}>
+          <div
+            className="flex gap-2 pl-3 text-center hover:cursor-pointer"
+            onClick={handleUserProfileClick}
+          >
             <div className="h-fit w-fit hover:underline">{displayNameT}</div>
-            <div className="text-gray-500" data-user-id={userid}>@{usernameT}</div>
+            <div className="text-gray-500" data-user-id={userid}>
+              @{usernameT}
+            </div>
           </div>
           <div className="pl-3 font-extralight">{content}</div>
         </div>

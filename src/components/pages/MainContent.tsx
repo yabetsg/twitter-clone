@@ -15,6 +15,7 @@ import {
 import { CommentSection } from "../comments/CommentSection";
 import FollowingProfile from "./UserProfile";
 import UserProfile from "./UserProfile";
+import { FollowingPage } from "./FollowingPage";
 
 export const MainContent = () => {
   const { personalProfileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent,userProfileActive} =
@@ -52,6 +53,7 @@ export const MainContent = () => {
       setForYouPageSelected("");
       setLoadForYou(false);
       setLoadFollowing(true);
+      
     } else if (element.id === "for-you") {
       setFollowingPageSelected("");
       setForYouPageSelected(
@@ -59,6 +61,7 @@ export const MainContent = () => {
       );
       setLoadForYou(true);
       setLoadFollowing(false);
+      
     }
   };
 
@@ -73,7 +76,7 @@ export const MainContent = () => {
       setLoadForYou(false);
       // showProfile(false);
     } else {
-      setLoadForYou(true);
+      // setLoadForYou(true);
     }
   }, [commentsActive, loadForYou, personalProfileActive]);
   return (
@@ -100,7 +103,7 @@ export const MainContent = () => {
                 </button>
               </div>
             </section>
-            {loadForYou && (
+            {loadForYou ? (
               <ForYouPage
                 handleTweetSubmit={handleTweetSubmit}
                 inputRef={inputRef}
@@ -122,7 +125,7 @@ export const MainContent = () => {
                   ];
                 })}
               ></ForYouPage>
-            )}
+            ) : <></>}
           </>
         ) : personalProfileActive ? (
           <PersonalProfile displayName={displayName} username={username} />

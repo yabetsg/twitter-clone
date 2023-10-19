@@ -14,9 +14,6 @@ import {
   getData,
   setUserData,
 } from "../../backend/services/userServices";
-import { ITweet } from "tweet";
-import { UserProfileInfo } from "profile";
-import { CommentContent } from "comment";
 export const HomePage = () => {
   const [userId, setUserId] = useLocalStorage("userId", "");
   const [loggedIn, setLoggedIn] = useLocalStorage("user", "");

@@ -5,6 +5,12 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  query,
+  collection,
+  orderBy,
+  where,
+  onSnapshot,
+  getDocs,
 } from "firebase/firestore";
 
 import { app } from "../config/firebase-config";
@@ -88,4 +94,22 @@ export const checkIfUserHasFollowed = async (
     result = false;
   }
   return result;
+};
+
+export const getFollowingData = async() => {
+  const db = getFirestore(app);
+  // const q = query(
+  //   collection(db, "follows")
+  // );
+  
+  //   console.log("im being ran");
+    
+  //   onSnapshot(q,(snapshot)=>{
+  //     snapshot.docChanges().forEach((change)=>{
+  //       console.log(change.doc.data())
+  //     })
+      
+  //   })
+  const querySnapshot = await getDocs(collection(db, "follows","users"));
+  return querySnapshot;
 };

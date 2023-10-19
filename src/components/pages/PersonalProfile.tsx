@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
@@ -7,8 +7,10 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 import { ITweet } from "tweet";
 import { fetchUserTweets } from "../../backend/services/tweetServices";
-import { setUserData } from "../../backend/services/userServices";
+import { getData, setUserData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
+import { AppContext } from "../../contexts/AppContext";
+import { UserData } from "profile";
 export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
@@ -24,10 +26,20 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
     displayName: string | undefined;
   }>();
   const [userValue, setUserValue] = useState("");
+  const [followingCount,setFollowingsCount] = useState(0);
+  const [followersCount,setFollowersCount] = useState(0);
+  // const {} = useContext(AppContext);
 
   useEffect(() => {
+    getData('users',userId).then((snapshot)=>{
+      const userData = snapshot.data() as UserData;
+      setFollowingsCount(userData.followingCount);
+      setFollowersCount(userData.followersCount);
+    }).catch((error)=>console.log(error));
     fetchUserTweets(userId, setTweetContent);
   }, [userId]);
+
+
 
   const handleNextBtn = () => {
     setFormTitle("Change your display name");
@@ -89,10 +101,10 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
         </div>
         <div className="flex gap-6">
           <div className="text-gray-500">
-            <span className="text-white">0</span> Following
+            <span className="text-white">{followingCount}</span> Following
           </div>
           <div className="text-gray-500">
-            <span className="text-white">0</span> Followers
+            <span className="text-white">{followersCount}</span> Followers
           </div>
         </div>
       </section>
