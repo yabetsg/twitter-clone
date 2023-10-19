@@ -7,7 +7,7 @@ import like from "/src/assets/like.svg";
 import retweet from "/src/assets/retweet.svg";
 import analytics from "/src/assets/analytics.svg";
 import { TweetProps } from "props";
-import { Comment, ITweet } from "tweet";
+import { ITweet } from "tweet";
 import {
   checkIfUserhasLiked,
   updateTweetField,
@@ -307,9 +307,11 @@ export const CommentSection = () => {
 
       <section>
         {comments.map((value, index) => {
+          const key = uniqid();
           return (
             <Tweet
-              key={index}
+              key={key}
+              userid={value.userId}
               tweetId={value.tweetId}
               content={value.content}
               displayNameT={value.displayName}

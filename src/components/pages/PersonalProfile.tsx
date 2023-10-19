@@ -6,8 +6,9 @@ import { Tweet } from "../tweets/Tweet";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 import { ITweet } from "tweet";
-import { fetchCurrentUserTweets } from "../../backend/services/tweetServices";
+import { fetchUserTweets } from "../../backend/services/tweetServices";
 import { setUserData } from "../../backend/services/userServices";
+import uniqid from "uniqid";
 export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);
   const [displaySetupModal, setDisplaySetupModal] = useState<boolean>(false);
@@ -25,7 +26,7 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
   const [userValue, setUserValue] = useState("");
 
   useEffect(() => {
-    fetchCurrentUserTweets(userId, setTweetContent);
+    fetchUserTweets(userId, setTweetContent);
   }, [userId]);
 
   const handleNextBtn = () => {
@@ -146,16 +147,18 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
       ) : null}
 
       <section>
-        {tweetContent.map((value, index) => {
+        {tweetContent.map((value) => {
+          const key = uniqid();
           return (
             <Tweet
+              userid={value.userId}
               displayNameT={displayName}
               usernameT={username}
-              key={index}
+              key={key}
               content={value.content}
               likes={value.likes}
               retweets={value.retweets}
-              comments={value.retweets}
+              comments={value.comments}
               tweetId={value.tweetId}
             />
           );

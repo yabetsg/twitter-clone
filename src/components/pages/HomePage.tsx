@@ -15,22 +15,40 @@ import {
   setUserData,
 } from "../../backend/services/userServices";
 import { ITweet } from "tweet";
-
+import { UserProfileInfo } from "profile";
+import { CommentContent } from "comment";
 export const HomePage = () => {
   const [userId, setUserId] = useLocalStorage("userId", "");
   const [loggedIn, setLoggedIn] = useLocalStorage("user", "");
   const [displayName, setDisplayName] = useState<string | null | undefined>("");
   const [username, setUsername] = useState<string | null | undefined>("");
-  const [profileActive, setProfileActive] = useState<boolean>(false);
+  const [personalProfileActive, setPersonalProfileActive] =
+    useState<boolean>(false);
   const [commentsActive, setCommentActive] = useState<boolean>(false);
+  const [commentContent, setCommentContent] = useState<{
+    tweetId: string;
+    content: string;
+    displayNameT: string;
+    usernameT: string;
+    likes: number;
+    retweets: number;
+    comments: number;
+  }>({
+    tweetId: "",
+    content: "",
+    displayNameT: "",
+    usernameT: "",
+    likes: 0,
+    retweets: 0,
+    comments: 0,
+  });
 
-  const [commentContent, setCommentContent] = useState({tweetId:"",
-    content:"",
-    displayNameT:"",
-    usernameT:"",
-    likes:0,
-    retweets:0,
-    comments:0,});
+  const [userProfileActive, setUserProfileActive] = useState(false);
+  const [userProfileInfo, setUserProfileInfo] = useState<{
+    userid: string;
+    displayName: string | undefined | null;
+    username: string | undefined | null;
+  }>({ userid: "", displayName: "", username: "" });
 
   const handleGoogleSignUp = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -124,16 +142,12 @@ export const HomePage = () => {
   };
 
   const showProfile = (value: boolean) => {
-    setProfileActive(value);
+    setPersonalProfileActive(value);
   };
 
   const showCommentSection = (value: boolean) => {
     setCommentActive(value);
   };
-
-  // const updateCommentContent = (value:string)=>{
-  //   setCommentContent(value);
-  // }
 
   useEffect(() => {
     getProfile();
@@ -148,12 +162,16 @@ export const HomePage = () => {
         handleGoogleSignIn,
         handleLogout,
         showProfile,
-        profileActive,
+        personalProfileActive,
         userId,
         commentsActive,
         showCommentSection,
         commentContent,
         setCommentContent,
+        userProfileActive,
+        setUserProfileActive,
+        userProfileInfo,
+        setUserProfileInfo,
       }}
     >
       <div className="flex">

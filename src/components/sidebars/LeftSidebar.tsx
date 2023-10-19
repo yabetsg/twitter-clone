@@ -17,6 +17,8 @@ export const LeftSidebar = () => {
     handleLogout,
     showProfile,
     showCommentSection,
+    setUserProfileActive,
+  
   } = useContext(AppContext);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleLogoutModal = () => {
@@ -33,6 +35,8 @@ export const LeftSidebar = () => {
           className="flex gap-5 p-5 text-xl hover:bg-[rgb(28,28,29)] hover:rounded-full cursor-pointer "
           onClick={() => {
             showProfile(false);
+            setUserProfileActive(false);
+            showCommentSection(false);
           }}
         >
           <span className="">

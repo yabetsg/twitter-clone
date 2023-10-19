@@ -13,9 +13,11 @@ import {
   fetchForYouTweets,
 } from "../../backend/services/tweetServices";
 import { CommentSection } from "../comments/CommentSection";
+import FollowingProfile from "./UserProfile";
+import UserProfile from "./UserProfile";
 
 export const MainContent = () => {
-  const { profileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent} =
+  const { personalProfileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent,userProfileActive} =
     useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
   const [userId] = useLocalStorage("userId", "");
@@ -69,15 +71,15 @@ export const MainContent = () => {
   useEffect(() => {
     if (commentsActive) {
       setLoadForYou(false);
-      showProfile(false);
+      // showProfile(false);
     } else {
       setLoadForYou(true);
     }
-  }, [commentsActive, loadForYou, profileActive]);
+  }, [commentsActive, loadForYou, personalProfileActive]);
   return (
     <>
       <div className="w-[45%]  text-white bg-black ml-[25%]  border-[rgb(47,51,54)] border-x border-collapse">
-        {!profileActive && !commentsActive ? (
+        {!personalProfileActive && !commentsActive && !userProfileActive ? (
           <>
             <section className="fixed flex flex-col bg-black w-[44.9%] opacity-95">
               <header className="p-3 text-xl font-bold ">Home</header>
@@ -102,10 +104,13 @@ export const MainContent = () => {
               <ForYouPage
                 handleTweetSubmit={handleTweetSubmit}
                 inputRef={inputRef}
-                content={tweetContent.map((value, index) => {
+                content={tweetContent.map((value) => {
+                  const key = uniqid();
+                  
                   return [
                     <Tweet
-                      key={index}
+                      key={key}
+                      userid={value.userId}
                       content={value.content}
                       displayNameT={value.displayName}
                       usernameT={value.username}
@@ -119,11 +124,12 @@ export const MainContent = () => {
               ></ForYouPage>
             )}
           </>
-        ) : profileActive ? (
+        ) : personalProfileActive ? (
           <PersonalProfile displayName={displayName} username={username} />
-        ) : (
-          commentsActive && <CommentSection></CommentSection>
-        )}
+        ) : userProfileActive?(
+          <UserProfile></UserProfile>
+         
+        ): commentsActive && <CommentSection></CommentSection>}
       </div>
     </>
   );

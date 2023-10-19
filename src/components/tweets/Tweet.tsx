@@ -25,6 +25,7 @@ import { getData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
 import { CommentSection } from "../comments/CommentSection";
 export const Tweet = ({
+  userid,
   tweetId,
   content,
   displayNameT,
@@ -40,7 +41,7 @@ export const Tweet = ({
   const [displayCommentModal, setDisplayCommentModal] = useState(false);
   const [commentInput, setCommentInput] = useState<string>("");
   const likesRef = useRef<HTMLDivElement>(null);
-  const { showCommentSection, setCommentContent, displayName, username, commentContent} = useContext(AppContext);
+  const { showCommentSection, setCommentContent, displayName, username, setUserProfileActive, setUserProfileInfo,showProfile,personalProfileActive} = useContext(AppContext);
 
   const handleLikes = () => {
     const tweetId = likesRef.current?.id ? likesRef.current?.id : "";
@@ -167,8 +168,9 @@ export const Tweet = ({
   };
 
   const handleTweetClick = () => {
-    showCommentSection(true);
-    setCommentContent({
+    
+      showCommentSection(true); 
+      setCommentContent({
       tweetId,
       content,
       displayNameT,
@@ -177,8 +179,25 @@ export const Tweet = ({
       retweets,
       comments,
     });
+    
+    
+   
   };
   
+  const handleUserProfileClick = ()=>{
+    const currentUserId = userId;
+    if(userid === currentUserId){
+      showProfile(true);
+    }else{
+      setUserProfileActive(true);
+      setUserProfileInfo({
+        userid:userid,
+        displayName:displayNameT,
+        username:usernameT
+      })
+    }
+    
+  }
   useEffect(() => {
     // Update state when props change
     setLikesCount(likes);
@@ -215,9 +234,9 @@ export const Tweet = ({
         </div>
 
         <div>
-          <div className="text-center flex gap-2 hover:bg-[rgb(28,28,29)]  pl-3">
-            <div className="h-fit w-fit">{displayNameT}</div>
-            <div className="text-gray-500">@{usernameT}</div>
+          <div className="flex gap-2 pl-3 text-center hover:cursor-pointer" onClick={handleUserProfileClick}>
+            <div className="h-fit w-fit hover:underline">{displayNameT}</div>
+            <div className="text-gray-500" data-user-id={userid}>@{usernameT}</div>
           </div>
           <div className="pl-3 font-extralight">{content}</div>
         </div>

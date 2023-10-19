@@ -19,7 +19,7 @@ import { app } from "../config/firebase-config";
 import { getDate } from "../../utils/dateFormatter";
 import { ITweet } from "tweet";
 
-export const fetchCurrentUserTweets = (
+export const fetchUserTweets = (
   userId: string | null,
   tweetHandler: React.Dispatch<React.SetStateAction<ITweet[]>>
 ) => {
@@ -93,6 +93,7 @@ export const fetchForYouTweets = (
   onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       const tweetData = change.doc.data() as {
+        userid:string,
         tweetId: string;
         content: string;
         userId: string;
@@ -190,23 +191,7 @@ export const getComments = async (tweetId: string) => {
 };
 
 
-export const readTweet = () => {
-  const db = getFirestore(app);
-  const q = query(collection(db, "cities"), where("state", "==", "CA"));
-  const unsubscribe = onSnapshot(q, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added") {
-        console.log("New city: ", change.doc.data());
-      }
-      if (change.type === "modified") {
-        console.log("Modified city: ", change.doc.data());
-      }
-      if (change.type === "removed") {
-        console.log("Removed city: ", change.doc.data());
-      }
-    });
-  });
-};
+
 
 export const setTweetData = async (
   collection: string,
@@ -289,26 +274,20 @@ export const setRetweetsData = async (
       date: getDate(),
       retweets: retweetsCount,
     });
-    console.log("Document successfully written!");
+    
   } catch (error) {
-    console.error("Error writing document: ", error);
+    console.log(error);
   }
 };
 
 export const deleteLikedData = (userid: string, tweetId: string) => {
   const db = getFirestore(app);
   deleteDoc(doc(db, "likes", userid, "tweets", tweetId))
-    .then(() => {
-      console.log("deleted");
-    })
     .catch((error) => console.log(error));
 };
 
 export const deleteRetweetedData = (userid: string, tweetId: string) => {
   const db = getFirestore(app);
   deleteDoc(doc(db, "retweets", userid, "tweets", tweetId))
-    .then(() => {
-      console.log("deleted");
-    })
     .catch((error) => console.log(error));
 };

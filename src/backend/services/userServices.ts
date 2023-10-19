@@ -1,4 +1,11 @@
-import { getFirestore, setDoc, doc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 import { app } from "../config/firebase-config";
 
@@ -29,5 +36,56 @@ export const setUserData = async (
   await setDoc(doc(db, collection, document), {
     displayName: displayName,
     userName: userName,
+    followersCount: 0,
+    followingCount: 0,
   });
+};
+
+export const updateUserData = (
+  userId: string,
+  fieldName: string,
+  newValue: number
+) => {
+  const db = getFirestore(app);
+  const docRef = doc(db, "users", userId);
+  const updateObject = {
+    [fieldName]: newValue,
+  };
+  updateDoc(docRef, updateObject).catch((error) => console.log(error));
+};
+
+export const deleteFollowData = (userId: string, followingUserId: string) => {
+  const db = getFirestore(app);
+  deleteDoc(doc(db, "follows", userId, "users", followingUserId)).catch(
+    (error) => console.log(error)
+  );
+};
+
+export const setFollowingData = async (
+  userId: string,
+  followingUserId: string,
+  displayName: string | null | undefined,
+  username: string | null | undefined
+) => {
+  const db = getFirestore(app);
+  const ref = doc(db, "follows", userId, "users", followingUserId);
+  await setDoc(ref, {
+    displayName: displayName,
+    username: username,
+  });
+};
+
+export const checkIfUserHasFollowed = async (
+  userId: string,
+  followingUserId: string
+) => {
+  const db = getFirestore(app);
+  let result = false;
+  const ref = doc(db, "follows", userId, "users", followingUserId);
+  if ((await getDoc(ref)).exists()) {
+    result = true;
+  } else {
+    result = false;
+  }
+  return result;
 };
