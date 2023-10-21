@@ -87,7 +87,7 @@ export const fetchForYouTweets = (
 
   const tweets: Array<ITweet> = [];
   const db = getFirestore(app);
-  const q = query(collection(db, "tweets"), orderBy("date", "desc"), limit(3));
+  const q = query(collection(db, "tweets"), orderBy("date", "desc"), limit(20));
   onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       const tweetData = change.doc.data() as {
