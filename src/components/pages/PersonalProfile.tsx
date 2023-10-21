@@ -4,10 +4,10 @@ import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-
+import exit from "../../assets/exit.svg"
 import { ITweet } from "tweet";
 import { fetchUserTweets } from "../../backend/services/tweetServices";
-import { getData, setUserData } from "../../backend/services/userServices";
+import { checkIfUserNameExists, getData, setUserData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
 import { AppContext } from "../../contexts/AppContext";
 import { UserData } from "profile";
@@ -26,6 +26,7 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
     displayName: string | undefined;
   }>();
   const [userValue, setUserValue] = useState("");
+  const [error,setError]= useState("");
   const [followingCount,setFollowingsCount] = useState(0);
   const [followersCount,setFollowersCount] = useState(0);
   // const {} = useContext(AppContext);
@@ -42,12 +43,20 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
 
 
   const handleNextBtn = () => {
-    setFormTitle("Change your display name");
-    setFormPlaceholder("Enter new display name");
-    setDisplayButton((prevState) => !prevState);
+    checkIfUserNameExists(userValue).then((snapshot)=>{
+      if(snapshot.empty){
+        setFormTitle("Change your display name");
+        setFormPlaceholder("Enter new display name");
+        setDisplayButton((prevState) => !prevState);
+    
+        setNewUserInfo({ username: userValue, displayName: "" });
+        setUserValue("");
+        setError("");
 
-    setNewUserInfo({ username: userValue, displayName: "" });
-    setUserValue("");
+      }else{
+        setError("That username has been taken");
+      }
+    }).catch((error)=>console.log(error));
   };
   const handleSetupForm = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -96,8 +105,8 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
 
       <section className="flex flex-col gap-8 px-5 mt-16">
         <div>
-          <div className="text-lg font-bold">{displayName}</div>
-          <div className="text-gray-500 text-md">@{username}</div>
+          <div className="text-lg font-bold">{newUserInfo?.displayName||displayName}</div>
+          <div className="text-gray-500 text-md">@{newUserInfo?.username||username}</div>
         </div>
         <div className="flex gap-6">
           <div className="text-gray-500">
@@ -129,27 +138,29 @@ export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
       {displaySetupModal ? (
         <section className="">
           <form onSubmit={handleSetupForm}>
-            <div className="absolute w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 bg-gray-800 z-40 top-1/2 left-1/2 max-sm:w-full max-sm:h-full text-center rounded-lg flex flex-col gap-8 p-20 justify-center">
+            <div className="absolute w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 bg-black z-40 top-1/2 left-1/2 max-sm:w-full max-sm:h-full text-center rounded-lg flex flex-col gap-8 p-20 justify-center">
+            <img className="relative top-[-80px] right-[-370px] text-lg w-10 h-10 hover:bg-[rgb(28,28,29)] cursor-pointer rounded-full" src={exit} onClick={()=>setDisplaySetupModal(false)}></img>
               <div className="text-2xl font-extrabold text-white ">
                 {formTitle}
               </div>
               <input
-                className="p-3 text-black rounded-full placeholder:p-2"
+                className="p-3 text-black focus:border-[3px] border-[3px] border-black focus:border-blue-500 rounded-full outline-none"
                 placeholder={formPlaceholder}
                 value={userValue}
                 onChange={(e) => setUserValue(e.target.value)}
               ></input>
-
+              <div className="text-sm font-semibold text-red-500">{error}</div>
               {!displayButton ? (
                 <button
                   className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold"
                   onClick={handleNextBtn}
+                  type="button"
                 >
                   Next
                 </button>
               ) : null}
               {displayButton ? (
-                <button className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold">
+                <button className="bg-[rgb(29,155,240)] px-8 py-3 self-center rounded-full text-lg font-semibold" type="submit">
                   Done
                 </button>
               ) : null}

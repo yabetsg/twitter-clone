@@ -23,6 +23,7 @@ import {
 import { getData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
 
+
 export const Tweet = ({
   userid,
   tweetId,
@@ -273,6 +274,7 @@ export const Tweet = ({
           <span className="text-sm text-gray-500">
             {likesCount > 0 && likesCount}
           </span>
+
         </div>
         <img className="w-5 h-5" src={analytics} alt="" />
       </div>

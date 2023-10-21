@@ -46,7 +46,7 @@ export const FollowingPage = ({ handleTweetSubmit, inputRef }: ForYouProps) => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [userId]);
   return (
     <>
       <section className="mt-28">

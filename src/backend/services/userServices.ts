@@ -117,3 +117,13 @@ export const getUserTweet =async(userId:string)=>{
   const docs = await getDocs(q);
   return docs;
 }
+
+export const checkIfUserNameExists = async(username:string)=>{
+  const db = getFirestore(app);
+  const q = query(
+    collection(db, "users"),
+    where("userName", "==", username)
+  );
+  const docs = await getDocs(q);
+  return docs;
+}
