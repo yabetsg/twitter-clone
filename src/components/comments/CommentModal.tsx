@@ -1,6 +1,5 @@
 import { CommentModalProps } from "props";
 import defaultPfp from "../../assets/default.png";
-import { useState } from "react";
 
 export const CommentModal = ({
   tweetId,

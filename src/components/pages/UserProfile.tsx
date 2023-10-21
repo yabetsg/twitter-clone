@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import defaultPfp from "../../assets/default.png";
 import backIcon from "../../assets/back.svg";
 import { AppContext } from "../../contexts/AppContext";

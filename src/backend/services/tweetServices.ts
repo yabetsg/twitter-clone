@@ -12,8 +12,6 @@ import {
   limit,
   orderBy,
   getDocs,
-  DocumentData,
-  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { app } from "../config/firebase-config";
 import { ITweet } from "tweet";

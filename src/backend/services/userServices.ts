@@ -7,15 +7,11 @@ import {
   deleteDoc,
   query,
   collection,
-  orderBy,
   where,
-  onSnapshot,
   getDocs,
 } from "firebase/firestore";
 
 import { app } from "../config/firebase-config";
-import firebase from "firebase/compat/app";
-import { ITweet } from "tweet";
 
 export const getData = async (collection: string, document: string) => {
   const db = getFirestore(app);

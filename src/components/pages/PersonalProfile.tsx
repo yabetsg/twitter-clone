@@ -1,4 +1,4 @@
-import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { ProfileProps } from "props";
 import defaultPfp from "../../assets/default.png";
 import { Tweet } from "../tweets/Tweet";
@@ -9,7 +9,6 @@ import { ITweet } from "tweet";
 import { fetchUserTweets } from "../../backend/services/tweetServices";
 import { checkIfUserNameExists, getData, setUserData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
-import { AppContext } from "../../contexts/AppContext";
 import { UserData } from "profile";
 export const PersonalProfile = ({ displayName, username }: ProfileProps) => {
   const [tweetContent, setTweetContent] = useState<Array<ITweet>>([]);

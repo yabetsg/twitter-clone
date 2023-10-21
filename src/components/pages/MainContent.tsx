@@ -13,16 +13,14 @@ import {
   fetchForYouTweets,
 } from "../../backend/services/tweetServices";
 import { CommentSection } from "../comments/CommentSection";
-import FollowingProfile from "./UserProfile";
 import UserProfile from "./UserProfile";
 import { FollowingPage } from "./FollowingPage";
 
 export const MainContent = () => {
-  const { personalProfileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent,userProfileActive,} =
+  const { personalProfileActive, username, displayName, commentsActive, commentContent,userProfileActive,} =
     useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
   const [userId] = useLocalStorage("userId", "");
-  const [renderForYou, setRenderForYou] = useState<boolean>(true);
   const [forYouPageSelected, setForYouPageSelected] = useState<string>(
     "underline underline-offset-[15px] decoration-[rgb(29,155,240)]"
   );

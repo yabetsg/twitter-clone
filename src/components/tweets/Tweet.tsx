@@ -1,4 +1,4 @@
-import { SyntheticEvent, useContext, useEffect, useRef, useState } from "react";
+import {  useContext, useEffect, useRef, useState } from "react";
 import defaultPfp from "../../assets/default.png";
 import { AppContext } from "../../contexts/AppContext";
 import comment from "/src/assets/comment.svg";
@@ -49,7 +49,6 @@ export const Tweet = ({
     setUserProfileActive,
     setUserProfileInfo,
     showProfile,
-    personalProfileActive,
   } = useContext(AppContext);
 
   const handleLikes = () => {

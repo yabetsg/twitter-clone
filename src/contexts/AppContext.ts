@@ -1,28 +1,25 @@
-import { MouseEvent, SetStateAction, createContext } from "react";
-import { LeftSidebar } from "../components/sidebars/LeftSidebar";
+import { createContext } from "react";
 import {  User } from "login";
-import { ITweet } from "tweet";
-import { UserProfileInfo } from "profile";
   
 export const AppContext = createContext<User>({
     username: undefined,
     displayName: undefined,
-    handleGoogleSignUp: function (e: MouseEvent<HTMLElement, globalThis.MouseEvent>): void {
+    handleGoogleSignUp: function (): void {
         throw new Error("Function not implemented.");
     },
-    handleGoogleSignIn: function (e: MouseEvent<HTMLElement, globalThis.MouseEvent>): void {
+    handleGoogleSignIn: function (): void {
         throw new Error("Function not implemented.");
     },
-    handleLogout: function (e: MouseEvent<HTMLElement, globalThis.MouseEvent>): void {
+    handleLogout: function (): void {
         throw new Error("Function not implemented.");
     },
-    showProfile: function (value: boolean): void {
+    showProfile: function (): void {
         throw new Error("Function not implemented.");
     },
     personalProfileActive: false,
     userId: null,
     commentsActive: false,
-    showCommentSection: function (value: boolean): void {
+    showCommentSection: function (): void {
         throw new Error("Function not implemented.");
     },
     commentContent: {
@@ -34,11 +31,11 @@ export const AppContext = createContext<User>({
         retweets: 0,
         comments: 0
     },
-    setCommentContent: function (value: any): void {
+    setCommentContent: function (): void {
         throw new Error("Function not implemented.");
     },
     userProfileActive: false,
-    setUserProfileActive: function (value: SetStateAction<boolean>): void {
+    setUserProfileActive: function (): void {
         throw new Error("Function not implemented.");
     },
     userProfileInfo: {
@@ -46,7 +43,7 @@ export const AppContext = createContext<User>({
         displayName: undefined,
         username: undefined
     },
-    setUserProfileInfo: function (value: SetStateAction<{ userid: string; displayName: string | null | undefined; username: string | null | undefined; }>): void {
+    setUserProfileInfo: function (): void {
         throw new Error("Function not implemented.");
     }
 });

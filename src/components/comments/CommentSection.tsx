@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import defaultPfp from "../../assets/default.png";
 import { AppContext } from "../../contexts/AppContext";
 import backIcon from "../../assets/back.svg";
@@ -6,7 +6,7 @@ import comment from "/src/assets/comment.svg";
 import like from "/src/assets/like.svg";
 import retweet from "/src/assets/retweet.svg";
 import analytics from "/src/assets/analytics.svg";
-import { TweetProps } from "props";
+
 import { ITweet } from "tweet";
 import {
   checkIfUserhasLiked,
@@ -31,7 +31,6 @@ export const CommentSection = () => {
     commentContent,
     username,
     displayName,
-    commentsActive
   } = useContext(AppContext);
   const [likesCount, setLikesCount] = useState(commentContent.likes);
   const [retweetCount, setRetweetCount] = useState(commentContent.retweets);
@@ -39,11 +38,8 @@ export const CommentSection = () => {
   const [userId] = useLocalStorage("userId", "");
   const [comments, setComments] = useState<ITweet[]>([]);
   const [commentInput, setCommentInput] = useState<string>("");
-  const [commentProfile, setCommentProfile] = useState<{
-    displayName: string;
-    userName: string;
-  }>({ displayName: "", userName: "" });
-  const tweetRef = useRef<HTMLDivElement>(null);
+  
+
 
   const handleLikes = () => {
     const tweetId = commentContent.tweetId;
@@ -170,7 +166,6 @@ export const CommentSection = () => {
     const usernameT = commentContent.displayNameT;
     const likes = commentContent.likes;
     const retweets = commentContent.retweets;
-    const comments = commentCount + 1;
     setCommentsData(
       commentId,
       tweetId,
@@ -305,7 +300,7 @@ export const CommentSection = () => {
       </section>
 
       <section>
-        {comments.map((value, index) => {
+        {comments.map((value) => {
           const key = uniqid();
           return (
             <Tweet

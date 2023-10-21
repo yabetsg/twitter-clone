@@ -2,12 +2,10 @@ import { ForYouProps } from "props";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../contexts/AppContext";
 import {
-  getData,
   getFollowingData,
   getUserTweet,
 } from "../../backend/services/userServices";
 import { ITweet } from "tweet";
-import { fetchUserTweets } from "../../backend/services/tweetServices";
 import { Tweet } from "../tweets/Tweet";
 import uniqid from "uniqid";
 
