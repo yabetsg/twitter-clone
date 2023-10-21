@@ -16,8 +16,8 @@ import {
   QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { app } from "../config/firebase-config";
-import { getDate } from "../../utils/dateFormatter";
 import { ITweet } from "tweet";
+import generateTimestamp from "../../utils/currentTimestamp";
 
 export const fetchUserTweets = (
   userId: string | null,
@@ -29,7 +29,7 @@ export const fetchUserTweets = (
   const q = query(
     collection(db, "tweets"),
     where("userId", "==", userId),
-    orderBy("userId", "desc")
+    orderBy("date", "desc")
   );
 
   onSnapshot(q, (snapshot) => {
@@ -197,17 +197,21 @@ export const setTweetData = async (
   collection: string,
   tweetId: string,
   content: string,
-  userId: string | null
+  userId: string | null,
+  username:string,
+  displayName:string
 ) => {
   const db = getFirestore(app);
   await setDoc(doc(db, collection, tweetId), {
     tweetId: tweetId,
     content: content,
     userId: userId,
-    date: getDate(),
+    date: generateTimestamp(),
     likes: 0,
     retweets: 0,
     comments: 0,
+    username:username,
+    displayName:displayName,
   });
 };
 
@@ -223,7 +227,7 @@ export const setLikesData = async (
     await setDoc(likeDocRef, {
       content: content,
       userId: userId,
-      date: getDate(),
+      date: generateTimestamp(),
       likes: likesCount,
     });
   } catch (error) {
@@ -246,7 +250,7 @@ export const setCommentsData = async (
       tweetId: tweetId,
       content: content,
       userId: userId,
-      date: getDate(),
+      date: generateTimestamp(),
       likes: 0,
       retweets: 0,
       comments: 0,
@@ -271,7 +275,7 @@ export const setRetweetsData = async (
     await setDoc(retweetDocRef, {
       content: content,
       userId: userId,
-      date: getDate(),
+      date: generateTimestamp(),
       retweets: retweetsCount,
     });
     

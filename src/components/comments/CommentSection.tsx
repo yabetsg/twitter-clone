@@ -16,7 +16,6 @@ import {
   checkIfUserhasRetweeted,
   deleteRetweetedData,
   setRetweetsData,
-  setTweetData,
   getComments,
   setCommentsData,
 } from "../../backend/services/tweetServices";

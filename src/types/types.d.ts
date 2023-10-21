@@ -79,8 +79,12 @@ declare module "props" {
   export interface ForYouProps {
     handleTweetSubmit: (e: FormEvent<HTMLFormElement>) => void;
     inputRef: React.RefObject<HTMLInputElement>;
-    content: Tweet;
+    content?: Tweet;
   }
+  // export interface FollowingProps{
+  //   handleTweetSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  //   inputRef: React.RefObject<HTMLInputElement>;
+  // }
   export interface TweetProps {
     userid: string;
     tweetId: string;

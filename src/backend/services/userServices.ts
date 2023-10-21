@@ -14,6 +14,8 @@ import {
 } from "firebase/firestore";
 
 import { app } from "../config/firebase-config";
+import firebase from "firebase/compat/app";
+import { ITweet } from "tweet";
 
 export const getData = async (collection: string, document: string) => {
   const db = getFirestore(app);
@@ -96,20 +98,22 @@ export const checkIfUserHasFollowed = async (
   return result;
 };
 
-export const getFollowingData = async() => {
+export const getFollowingData = async (userId:string) => {
   const db = getFirestore(app);
-  // const q = query(
-  //   collection(db, "follows")
-  // );
-  
-  //   console.log("im being ran");
-    
-  //   onSnapshot(q,(snapshot)=>{
-  //     snapshot.docChanges().forEach((change)=>{
-  //       console.log(change.doc.data())
-  //     })
-      
-  //   })
-  const querySnapshot = await getDocs(collection(db, "follows","users"));
-  return querySnapshot;
+  const usersCollection = collection(db, `follows/${userId}/users`);
+  const q = query(usersCollection);
+
+  const docs = await getDocs(q)
+  return docs;
 };
+
+export const getUserTweet =async(userId:string)=>{
+  const db = getFirestore(app);
+  const q = query(
+    collection(db, "tweets"),
+    where("userId", "==", userId)
+  );
+  
+  const docs = await getDocs(q);
+  return docs;
+}

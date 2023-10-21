@@ -1,21 +1,52 @@
 import { ForYouProps } from "props";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../contexts/AppContext";
-
+import {
+  getData,
+  getFollowingData,
+  getUserTweet,
+} from "../../backend/services/userServices";
+import { ITweet } from "tweet";
+import { fetchUserTweets } from "../../backend/services/tweetServices";
+import { Tweet } from "../tweets/Tweet";
+import uniqid from "uniqid";
 
 export const FollowingPage = ({ handleTweetSubmit, inputRef }: ForYouProps) => {
+  const { userId } = useContext(AppContext);
+  const [followingContent, setFollowingContent] = useState<Array<ITweet>>([]);
 
-  const {userId} = useContext(AppContext);
+  useEffect(() => {
+    const currentUserId = userId ? userId : "";
+    const followingIds: string[] = [];
+    getFollowingData(currentUserId)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const followingId = doc.id;
+          followingIds.push(followingId);
+        });
 
-  useEffect(()=>{
-    // const currentUserId = userId?userId:"";
-    // getFollowingData().then((snapshot)=>{
-    //   snapshot.forEach((doc) => {
-    //     // doc.data() is never undefined for query doc snapshots
-    //     console.log(doc.id, " => ", doc.data());
-    //   });
-    // }).catch((error)=>console.log(error))
-  },[])
+        const tweets: ITweet[] = [];
+        const promises:Promise<void>[] = [];
+        followingIds.forEach((id) => {
+          const promise = getUserTweet(id)
+            .then((snapshot) => {
+              snapshot.forEach((doc) => {
+                const tweetData = doc.data() as ITweet;
+                tweets.push(tweetData);
+              });
+            })
+            .catch((error) => console.log(error));
+            promises.push(promise)
+          });
+          Promise.all(promises).then(()=>{
+            setFollowingContent(tweets);
+            
+          }).catch((error)=>console.log(error));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <>
       <section className="mt-28">
@@ -41,6 +72,25 @@ export const FollowingPage = ({ handleTweetSubmit, inputRef }: ForYouProps) => {
             </button>
           </div>
         </form>
+      </section>
+
+      <section>
+        {followingContent.map((value) => {
+          const key = uniqid();
+          return (
+            <Tweet
+              key={key}
+              userid={value.userId}
+              content={value.content}
+              displayNameT={value.displayName}
+              usernameT={value.username}
+              likes={value.likes}
+              retweets={value.retweets}
+              tweetId={value.tweetId}
+              comments={value.comments}
+            ></Tweet>
+          );
+        })}
       </section>
     </>
   );

@@ -18,7 +18,7 @@ import UserProfile from "./UserProfile";
 import { FollowingPage } from "./FollowingPage";
 
 export const MainContent = () => {
-  const { personalProfileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent,userProfileActive} =
+  const { personalProfileActive, username, displayName, commentsActive, showProfile , showCommentSection, commentContent,userProfileActive,} =
     useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
   const [userId] = useLocalStorage("userId", "");
@@ -37,9 +37,11 @@ export const MainContent = () => {
     e.preventDefault();
     const tweetId = uniqid();
     const tweet = inputRef.current ? inputRef.current.value : "";
+    const userName= username?username:"";
+    const name = displayName?displayName:"";
     inputRef.current ? (inputRef.current.value = "") : null;
     setContent(tweet);
-    setTweetData("tweets", tweetId, tweet, userId).catch((error) =>
+    setTweetData("tweets", tweetId, tweet, userId,userName,name).catch((error) =>
       console.log(error)
     );
   };
@@ -75,8 +77,11 @@ export const MainContent = () => {
     if (commentsActive) {
       setLoadForYou(false);
       // showProfile(false);
-    } else {
-      // setLoadForYou(true);
+    } else if(loadFollowing){
+      //
+    }else{
+      setLoadForYou(true);
+
     }
   }, [commentsActive, loadForYou, personalProfileActive]);
   return (
@@ -110,7 +115,7 @@ export const MainContent = () => {
                 content={tweetContent.map((value) => {
                   const key = uniqid();
                   
-                  return [
+                  return (
                     <Tweet
                       key={key}
                       userid={value.userId}
@@ -121,11 +126,12 @@ export const MainContent = () => {
                       retweets={value.retweets}
                       tweetId={value.tweetId}
                       comments={value.comments}
-                    />,
-                  ];
+                    />
+                  );
                 })}
               ></ForYouPage>
-            ) : <></>}
+            ) :<FollowingPage  handleTweetSubmit={handleTweetSubmit}
+            inputRef={inputRef} ></FollowingPage>}
           </>
         ) : personalProfileActive ? (
           <PersonalProfile displayName={displayName} username={username} />

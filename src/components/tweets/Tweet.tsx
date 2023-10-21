@@ -18,12 +18,11 @@ import {
   checkIfUserhasRetweeted,
   deleteRetweetedData,
   setRetweetsData,
-  setTweetData,
   setCommentsData,
 } from "../../backend/services/tweetServices";
 import { getData } from "../../backend/services/userServices";
 import uniqid from "uniqid";
-import { CommentSection } from "../comments/CommentSection";
+
 export const Tweet = ({
   userid,
   tweetId,
